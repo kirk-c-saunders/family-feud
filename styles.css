@@ -1,0 +1,33 @@
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+.center {
+    margin: auto;
+    width: 800px;
+    text-align: center;
+}
+
+.narrowTableColumn {
+    width: 100px;
+}
+
+.wideTableColumn {
+    width: 600px;
+}
+
+.answer {
+    background-color: black;
+}
+
+.answeredAnswer {
+    background-color: white;
+}
+
+.noBorder {
+    border: none;
+}

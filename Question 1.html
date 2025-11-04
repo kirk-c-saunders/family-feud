@@ -1,0 +1,101 @@
+<!DOCTYPE html> 
+<html> 
+  
+<head> 
+	<link rel="stylesheet" type="text/css" href="styles.css">
+</head> 
+  
+<body> 
+	<article class = "center">
+		<h1>  
+			Question 1
+		</h1> 
+		<h2> 
+			Name one thing you always have in your pantry
+		</h2>
+		<main>
+			<table>
+				<colgroup>
+					<col class="narrowTableColumn">
+					<col class="wideTableColumn">
+					<col class="narrowTableColumn">
+				</colgroup>
+				<tr>
+					<th>
+						<h3>Reveal</h3>
+					</th>
+					<th>
+						<h3>Answer</h3>
+					</th>
+					<th>
+						<h3>Points</h3>
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<button onclick="WrapperToggleBackgroundColor('Answer1', false)">Answer 1</button>
+					</td>
+					<td Id="Answer1" class="answer">
+						<h4>Beans</h4>
+					</td>
+					<td Id="Answer1Points" class="answer">
+						<h4>28</h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button onclick="WrapperToggleBackgroundColor('Answer2', false)">Answer 2</button>
+					</td>
+					<td Id="Answer2" class="answer">
+						<h4>Rice</h4>
+					</td>
+					<td Id="Answer2Points" class="answer">
+						<h4>25</h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button onclick="WrapperToggleBackgroundColor('Answer3', false)">Answer 3</button>
+					</td>
+					<td Id="Answer3" class="answer">
+						<h4>Potatoes</h4>
+					</td>
+					<td Id="Answer3Points" class="answer">
+						<h4>21</h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button onclick="WrapperToggleBackgroundColor('Answer4', false)">Answer 4</button>
+					</td>
+					<td Id="Answer4" class="answer">
+						<h4>Onions</h4>
+					</td>
+					<td Id="Answer4Points" class="answer">
+						<h4>15</h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button onclick="WrapperToggleBackgroundColor('Answer5', false)">Answer 5</button>
+					</td>
+					<td Id="Answer5" class="answer">
+						<h4>Flour</h4>
+					</td>
+					<td Id="Answer5Points" class="answer">
+						<h4>10</h4>
+					</td>
+				</tr>
+				<tr class="noBorder">
+					<td class="noBorder">
+						<button onclick="RevealAllAnswersAndPoints()">Reveal All</button>
+					</td>
+					<td class="noBorder"></td>
+					<td class="noBorder"></td>
+				</tr>
+			</table>
+		</main>
+	</article>
+	<script src= "script.js"></script>
+</body> 
+</html>         
