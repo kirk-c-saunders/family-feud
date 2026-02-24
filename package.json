@@ -1,0 +1,26 @@
+{
+  "name": "family-feud",
+  "version": "1.0.0",
+  "description": "Family Feud",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server",
+    "dev": "node --watch --env-file=.env server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirk-c-saunders/family-feud.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kirk-c-saunders/family-feud/issues"
+  },
+  "homepage": "https://github.com/kirk-c-saunders/family-feud#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "express": "^5.2.1"
+  }
+}

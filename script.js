@@ -1,3 +1,6 @@
+function addRowHandlers() {
+    
+}
 function ToggleBackgroundColor(IdName, IsRevealOnly) {
     var x = document.getElementById(IdName);
     if (x) { //only do something if the element exists (so we don't throw errors)

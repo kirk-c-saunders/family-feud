@@ -1,0 +1,318 @@
+[
+    {
+        "answers": [
+            {
+                "points": 25,
+                "text": "Phone number"
+            },
+            {
+                "points": 23,
+                "text": "Social security number"
+            },
+            {
+                "points": 20,
+                "text": "Driver’s license number"
+            },
+            {
+                "points": 15,
+                "text": "Debit/credit card number"
+            },
+            {
+                "points": 11,
+                "text": "Bank routing number"
+            }
+        ],
+		"id": "57478d44-9076-4da9-b308-91fbb6d77fef",
+        "question": "Name an important number people often memorize."
+    },
+	{
+        "answers": [
+            {
+                "points": 44,
+                "text": "Car"
+            },
+            {
+                "points": 22,
+                "text": "Body"
+            },
+            {
+                "points": 17,
+                "text": "Computer"
+            },
+            {
+                "points": 7,
+                "text": "Communication"
+            },
+            {
+                "points": 2,
+                "text": "Foreign relations"
+            },
+            {
+                "points": 2,
+                "text": "TV"
+            }
+        ],
+		"id": "45a1b26a-b111-4a1a-bb9d-c33537ad5a88",
+        "question": "Name something that breaks down."
+    },
+	{
+        "answers": [
+            {
+                "points": 26,
+                "text": "Sugar"
+            },
+            {
+                "points": 25,
+                "text": "Cream"
+            },
+            {
+                "points": 18,
+                "text": "Ice"
+            },
+            {
+                "points": 15,
+                "text": "Syrup"
+            },
+            {
+                "points": 10,
+                "text": "Nothing"
+            }
+        ],
+		"id": "011258e8-0843-47e9-90f6-bebee218b66c",
+        "question": "What might you put in your coffee?"
+    },
+	{
+        "answers": [
+            {
+                "points": 28,
+                "text": "Beans"
+            },
+            {
+                "points": 25,
+                "text": "Rice"
+            },
+            {
+                "points": 21,
+                "text": "Potatoes"
+            },
+            {
+                "points": 15,
+                "text": "Onions"
+            },
+            {
+                "points": 10,
+                "text": "Flour"
+            }
+        ],
+		"id": "66f1369e-d5d8-4907-ad15-3b6d0499fa75",
+        "question": "Name one thing you always have in your pantry"
+    },
+	{
+        "answers": [
+            {
+                "points": 30,
+                "text": "Traffic"
+            },
+            {
+                "points": 25,
+                "text": "Hit snooze too many times"
+            },
+            {
+                "points": 19,
+                "text": "Car trouble"
+            },
+            {
+                "points": 13,
+                "text": "Bad weather"
+            },
+            {
+                "points": 10,
+                "text": "Family obligations"
+            }
+        ],
+		"id": "831931db-38b8-4ec9-88e7-b8b0232200db",
+        "question": "What are the top reasons for being late to work?"
+    },
+	{
+        "answers": [
+            {
+                "points": 29,
+                "text": "Acetaminophen/Ibuprofen"
+            },
+            {
+                "points": 25,
+                "text": "Thermometer"
+            },
+            {
+                "points": 20,
+                "text": "Neosporin/antibacterial ointment"
+            },
+            {
+                "points": 16,
+                "text": "Rubbing alcohol"
+            },
+            {
+                "points": 11,
+                "text": "Bandages"
+            }
+        ],
+		"id": "8561660d-7971-435c-a1b3-06393e078034",
+        "question": "What would you find in a home medicine cabinet?"
+    },
+	{
+        "answers": [
+            {
+                "points": 30,
+                "text": "Taking out the trash"
+            },
+            {
+                "points": 21,
+                "text": "Folding the laundry"
+            },
+            {
+                "points": 20,
+                "text": "Emptying the dishwasher"
+            },
+            {
+                "points": 17,
+                "text": "Cleaning the bathroom"
+            },
+            {
+                "points": 10,
+                "text": "Vacuuming"
+            }
+        ],
+		"id": "38ec2364-0083-46d6-b314-6dbf4ca6ba8e",
+        "question": "Name a chore that people hate."
+    },
+	{
+        "answers": [
+            {
+                "points": 28,
+                "text": "Avocado"
+            },
+            {
+                "points": 25,
+                "text": "Banana"
+            },
+            {
+                "points": 23,
+                "text": "Fresh berries"
+            },
+            {
+                "points": 15,
+                "text": "Salad greens/lettuce"
+            },
+            {
+                "points": 8,
+                "text": "Mushrooms"
+            }
+        ],
+		"id": "33972fce-2346-42dd-8e6f-cbffff912411",
+        "question": "Name a food that frequently goes bad before you get the chance to eat it."
+    },
+	{
+        "answers": [
+            {
+                "points": 27,
+                "text": "Eclipse"
+            },
+            {
+                "points": 25,
+                "text": "Presidential election"
+            },
+            {
+                "points": 21,
+                "text": "Leap Year"
+            },
+            {
+                "points": 15,
+                "text": "Olympics"
+            },
+            {
+                "points": 7,
+                "text": "FIFA World Cup"
+            }
+        ],
+		"id": "da13c1bb-3494-48a2-8ff5-f900c8d41755",
+        "question": "Name something that only happens once every few years"
+    },
+	{
+        "answers": [
+            {
+                "points": 30,
+                "text": "Politics"
+            },
+            {
+                "points": 25,
+                "text": "Religion"
+            },
+            {
+                "points": 19,
+                "text": "Your love life"
+            },
+            {
+                "points": 14,
+                "text": "Finances"
+            },
+            {
+                "points": 9,
+                "text": "Parenting advice"
+            }
+        ],
+		"id": "76eabbf4-ef76-4fb8-af91-f61b72cc62bc",
+        "question": "Things you don’t want to discuss during the holidays."
+    },
+	{
+        "answers": [
+            {
+                "points": 30,
+                "text": "Milk"
+            },
+            {
+                "points": 29,
+                "text": "Toilet paper"
+            },
+            {
+                "points": 18,
+                "text": "Bread"
+            },
+            {
+                "points": 13,
+                "text": "Eggs"
+            },
+            {
+                "points": 10,
+                "text": "Hand soap"
+            }
+        ],
+		"id": "bdde67a9-691a-4eb8-b8a6-917c8162f08d",
+        "question": "Name something at home that people often run out of."
+    },
+	{
+        "answers": [
+            {
+                "points": 30,
+                "text": "Phone calls"
+            },
+            {
+                "points": 24,
+                "text": "Beeper/pager"
+            },
+            {
+                "points": 20,
+                "text": "Letters"
+            },
+            {
+                "points": 13,
+                "text": "Telegram"
+            },
+            {
+                "points": 10,
+                "text": "Carrier pigeon"
+            }
+        ],
+		"id": "83901e07-c006-439d-8078-cf33a8a253cb",
+        "question": "Name a way that people communicated before texting was invented."
+    }
+]
