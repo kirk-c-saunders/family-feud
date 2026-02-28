@@ -1,2 +1,6 @@
 node_modules/
 .env
+#ignore all the contents of json/games
+json/games/*
+#except keep the folder (so we don't have to dynamically create it on first load)
+!json/games/.gitkeep
