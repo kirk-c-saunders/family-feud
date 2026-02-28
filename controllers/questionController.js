@@ -7,10 +7,6 @@ import fs from "fs/promises";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const foundQuestions = await getAllQuestions();
-
-console.log(JSON.parse(foundQuestions));
-
 async function getAllQuestions() {
     try {
         const questions = await fs.readFile(
@@ -24,14 +20,35 @@ async function getAllQuestions() {
 }
 
 export async function getNextQuestion (req, res, next) {
-    const allQuestions = await getAllQuestions();
-    const availableQuestions = [];
+    try {
+        const allQuestionsRaw = await getAllQuestions();
+        const allQuestions = JSON.parse(allQuestionsRaw);
+        
+        if(Object.hasOwn('askedQuestions', req.body)) {            
+            const availableQuestions = [];
 
-    for (question of questions) {
-        if (!req.body.askedQuestions.some(askedQuestion => askedQuestion.id = question.id)) {
-            availableQuestions.push(question);
+            for (const question of allQuestions) {
+                if (!req.body.askedQuestions.some(askedQuestion => askedQuestion == question.id)) {
+                    availableQuestions.push(question);
+                }
+            }
+
+            if(availableQuestions.length >= 1) {
+                return res.status(200).json(availableQuestions[Math.floor(Math.random() * availableQuestions.length)]);
+            } else {
+                return res.status(400).json({error: "No remaining questions available to ask."});
+            }
+        } else {
+            if (allQuestions.length >= 1) {
+                return res.status(200).json(allQuestions[Math.floor(Math.random() * allQuestions.length)]);
+            } else {
+                return res.status(400).json({error: "No questions found to ask"});
+            }
         }
+    } catch (e) {
+        console.log(e);
+        const error = new Error(e);
+        error.status = 500;
+        return next(error);
     }
-
-    return availableQuestions[(Math.random() * availableQuestions.length)]
 }
