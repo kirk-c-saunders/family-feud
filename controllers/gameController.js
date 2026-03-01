@@ -27,7 +27,7 @@ export async function createGame(req, res, next) {
     }
 
     try {
-        const game = [];
+        const game = {};
         const team1 = {};
         const team2 = {};
 
@@ -53,8 +53,8 @@ export async function createGame(req, res, next) {
         game.team2 = team2;
         game.teamInControl = 1;
 
-        await fs.writeFile(path.join(__dirname, "../", "json", "games", `${publicCode}.json`), game)
-
+        await fs.writeFile(path.join(__dirname, "../", "json", "games", `${publicCode}.json`), JSON.stringify(game, null, 2));
+        
         res.status(200).json({publicCode: publicCode, hostCode: hostCode});
     } catch (e) {
         const error = new Error(`Error creating game: ${e}`);
