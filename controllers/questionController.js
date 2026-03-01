@@ -24,7 +24,7 @@ export async function getNextQuestion (req, res, next) {
         const allQuestionsRaw = await getAllQuestions();
         const allQuestions = JSON.parse(allQuestionsRaw);
         
-        if(Object.hasOwn('askedQuestions', req.body)) {            
+        if(Object.hasOwn(req.body, 'askedQuestions')) {            
             const availableQuestions = [];
 
             for (const question of allQuestions) {

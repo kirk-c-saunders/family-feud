@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
         EX: import posts from './routes/genericRouteFile.js';
 */
 import question from './routes/question.js';
+import game from './routes/game.js';
 
 import logger from './middleware/logger.js';
 import errorHandler from './middleware/error.js';
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
     EX: app.use('/api/posts', posts);
 */
 app.use ('/api/question', question);
+app.use ('/api/game', game);
 
 
 app.use(notFound);

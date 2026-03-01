@@ -1,0 +1,40 @@
+{
+    "askedQuestions": ["guid of first answered question in the game", "and the second", "... and so on"],
+    "hostCode": "secret GUID to identify who is the host and who is not",
+    "name": "some string for the game name",
+    "round": {
+        "incorrectResponseCount": 0,
+        "question": {
+            "answers": [
+                {
+                    "answered": false,
+                    "points": 0,
+                    "text": "First Answer"
+                },{
+                    "answered": false,
+                    "points": 0,
+                    "text": "Second Answer"
+                },{
+                    "answered": false,
+                    "points": 0,
+                    "text": "... and so on"
+                }
+            ],
+            "id": "GUID for question",
+            "question": "The text for the question that will display on screen"
+        }
+    },
+    "team1" : {
+        "activePlayerIndex": 0,
+        "name": "some string for the name of the first team",
+        "players": ["Name of Player 1 on Team 1", "Name of Player 2 on Team 1", "... and so on"],
+        "score": 0
+    },
+    "team2" : {
+        "activePlayerIndex": 0,
+        "name": "some string for the name of the second team",
+        "players": ["Name of Player 1 on Team 2", "Name of Player 2 on Team 2", "... and so on"],
+        "score": 0
+    },
+    "teamInControl": 1
+}
