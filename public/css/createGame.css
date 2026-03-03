@@ -10,6 +10,11 @@ h1 {
     margin-bottom: 3rem;
 }
 
+form {
+    width: 100%;
+    padding: 1rem;
+}
+
 button {
     color: var(--text-color);
     background-color: var(--background-color-secondary);
@@ -32,11 +37,20 @@ ul {
     background-color: field;
 }
 
-.flex-container {
+.flex-container,
+.teams-container {
     display: flex;
-    width: 100vw;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.flex-container {
+    width: 100vw;
+}
+
+.teams-container {
+    width: 100%;
 }
 
 .team-grid-header {
@@ -51,10 +65,16 @@ ul {
     grid-area: add-player-label;
 }
 
+#name {
+    margin-top: 1rem;
+    width: 100%;
+}
+
 #team1,
 #team2 {
     display: grid;
     margin-top: 3rem;
+    padding: 1rem;
     border-color: var(--text-color);
     border-width: 2px;
     border-style:ridge;
@@ -65,6 +85,7 @@ ul {
                          "add-player-label add-player-label add-player-label"
                          "add-player-box add-player-box add-player-button"
                          "player-box player-box remove-player-button";
+    gap: 1rem;
 }
 
 #team-1-name,
@@ -90,4 +111,15 @@ ul {
 #remove-team-1-player-button,
 #remove-team-2-player-button {
     grid-area: remove-player-button;
+}
+
+@media (min-width: 992px) {
+    .teams-container {
+        flex-direction: row;
+        gap: 3rem;
+    }
+    #team1,
+    #team2 {
+        min-width: 445px;
+    }
 }

@@ -11,27 +11,29 @@
         <article class="flex-container">
             <h1>Create Game</h1>
             <form>
-                <label class ="right-margin" for="name">Game Name:</label>
+                <label class ="right-margin" for="name">Game Name:</label> <br>
                 <input type="text" class="white-textbox-boarder" id="name" name="name" required minlength="3"/>
-                <div id="team1">
-                    <h2 class="team-grid-header">Team 1 Details</h2>
-                    <label class ="right-margin team-name-label" for="team-1-name">Team Name:</label>
-                    <input type="text" class="white-textbox-boarder" id="team-1-name" name="team-1-name" required minlength="3"/>
-                    <label class ="right-margin add-player-label" for="add-team-1-player">Player Name:</label>
-                    <input type="text" class="white-textbox-boarder" id="add-team-1-player-textbox" name="add-team-1-player" minlength="2"/>
-                    <button id="add-team-1-player-button" class="add-player-button">Add Player</button>
-                    <ul class="white-textbox-boarder" id="team-1-player-list"></ul>
-                    <button id="remove-team-1-player-button" class="remove-player-button">Remove Player</button>
-                </div>
-                <div id="team2">
-                    <h2 class="team-grid-header">Team 2 Details</h2>
-                    <label class ="right-margin team-name-label" for="team-2-name">Team Name:</label>
-                    <input type="text" class="white-textbox-boarder" id="team-2-name" name="team-2-name" required minlength="3"/>
-                    <label class ="right-margin add-player-label" for="add-team-2-player">Player Name:</label>
-                    <input type="text" class="white-textbox-boarder" id="add-team-2-player-textbox" name="add-team-2-player" minlength="2"/>
-                    <button id="add-team-2-player-button" class="add-player-button">Add Player</button>
-                    <ul class="white-textbox-boarder" id="team-2-player-list"></ul>
-                    <button id="remove-team-2-player-button" class="remove-player-button">Remove Player</button>
+                <div class="teams-container">
+                    <div id="team1">
+                        <h2 class="team-grid-header">Team 1 Details</h2>
+                        <label class ="right-margin team-name-label" for="team-1-name">Team Name:</label>
+                        <input type="text" class="white-textbox-boarder" id="team-1-name" name="team-1-name" required minlength="3"/>
+                        <label class ="right-margin add-player-label" for="add-team-1-player">Player Name:</label>
+                        <input type="text" class="white-textbox-boarder" id="add-team-1-player-textbox" name="add-team-1-player" minlength="2"/>
+                        <button id="add-team-1-player-button" class="add-player-button">Add Player</button>
+                        <ul class="white-textbox-boarder" id="team-1-player-list"></ul>
+                        <button id="remove-team-1-player-button" class="remove-player-button">Remove Player</button>
+                    </div>
+                    <div id="team2">
+                        <h2 class="team-grid-header">Team 2 Details</h2>
+                        <label class ="right-margin team-name-label" for="team-2-name">Team Name:</label>
+                        <input type="text" class="white-textbox-boarder" id="team-2-name" name="team-2-name" required minlength="3"/>
+                        <label class ="right-margin add-player-label" for="add-team-2-player">Player Name:</label>
+                        <input type="text" class="white-textbox-boarder" id="add-team-2-player-textbox" name="add-team-2-player" minlength="2"/>
+                        <button id="add-team-2-player-button" class="add-player-button">Add Player</button>
+                        <ul class="white-textbox-boarder" id="team-2-player-list"></ul>
+                        <button id="remove-team-2-player-button" class="remove-player-button">Remove Player</button>
+                    </div>
                 </div>
             </form>
         </article>
