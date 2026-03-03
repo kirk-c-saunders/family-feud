@@ -1,0 +1,93 @@
+@import "reset.css";
+@import "globalVariables.css"; /* Access variable with  var(--[variable-name]) */
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+h1 {
+    margin-bottom: 3rem;
+}
+
+button {
+    color: var(--text-color);
+    background-color: var(--background-color-secondary);
+}
+
+ul {
+    color: var(--text-color);
+    background-color: var(--background-color-secondary);
+    min-height: 3rem;
+}
+
+.right-margin {
+    margin-right: 1rem;
+}
+
+.white-textbox-boarder {
+    border-color: var(--text-color);
+    border-width: 2px;
+    border-style: inset;
+    background-color: field;
+}
+
+.flex-container {
+    display: flex;
+    width: 100vw;
+    align-items: center;
+    justify-content: center;
+}
+
+.team-grid-header {
+    grid-area: team-grid-header;
+}
+
+.team-name-label {
+    grid-area: team-name-label;
+}
+
+.add-player-label {
+    grid-area: add-player-label;
+}
+
+#team1,
+#team2 {
+    display: grid;
+    margin-top: 3rem;
+    border-color: var(--text-color);
+    border-width: 2px;
+    border-style:ridge;
+    width:100%;
+    grid-template-areas: "team-grid-header team-grid-header team-grid-header"
+                         "team-name-label team-name-label team-name-label"
+                         "team-name-box team-name-box team-name-box"
+                         "add-player-label add-player-label add-player-label"
+                         "add-player-box add-player-box add-player-button"
+                         "player-box player-box remove-player-button";
+}
+
+#team-1-name,
+#team-2-name {
+    grid-area: team-name-box;
+}
+
+#add-team-1-player-textbox,
+#add-team-2-player-textbox {
+    grid-area: add-player-box;
+}
+
+#add-team-1-player-button,
+#add-team-2-player-button {
+    grid-area: add-player-button;
+}
+
+#team-1-player-list,
+#team-2-player-list {
+    grid-area: player-box;
+}
+
+#remove-team-1-player-button,
+#remove-team-2-player-button {
+    grid-area: remove-player-button;
+}

@@ -1,0 +1,6 @@
+:root{
+    --background-color: #132A13;
+    --text-color: white;
+    --background-color-secondary: #4f772d; /* used for things like button colors */
+    --screen-size-breakpoint: 992px;
+}
