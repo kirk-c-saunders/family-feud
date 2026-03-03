@@ -10,11 +10,6 @@ h1 {
     margin-bottom: 3rem;
 }
 
-form {
-    width: 100%;
-    padding: 1rem;
-}
-
 button {
     color: var(--text-color);
     background-color: var(--background-color-secondary);
@@ -38,7 +33,8 @@ ul {
 }
 
 .flex-container,
-.teams-container {
+.teams-container,
+.form-flex-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -49,8 +45,13 @@ ul {
     width: 100vw;
 }
 
-.teams-container {
+.teams-container,
+.form-flex-container {
     width: 100%;
+}
+
+.form-flex-container {
+    padding: 1rem;
 }
 
 .team-grid-header {
@@ -63,6 +64,10 @@ ul {
 
 .add-player-label {
     grid-area: add-player-label;
+}
+
+#name-label {
+    align-self: flex-start;
 }
 
 #name {
@@ -113,13 +118,26 @@ ul {
     grid-area: remove-player-button;
 }
 
+#create-game {
+    padding: 1rem;
+    margin-top: 3rem;
+    width: 100%;
+
+}
+
 @media (min-width: 992px) {
     .teams-container {
         flex-direction: row;
         gap: 3rem;
     }
+
     #team1,
     #team2 {
         min-width: 445px;
+    }
+
+    #create-game {
+        align-self: flex-end;
+        width: auto;
     }
 }

@@ -10,8 +10,8 @@
     <main>
         <article class="flex-container">
             <h1>Create Game</h1>
-            <form>
-                <label class ="right-margin" for="name">Game Name:</label> <br>
+            <form class="form-flex-container">
+                <label id="name-label" class ="right-margin" for="name">Game Name:</label> <br>
                 <input type="text" class="white-textbox-boarder" id="name" name="name" required minlength="3"/>
                 <div class="teams-container">
                     <div id="team1">
@@ -35,6 +35,7 @@
                         <button id="remove-team-2-player-button" class="remove-player-button">Remove Player</button>
                     </div>
                 </div>
+                <button id="create-game" type="submit">Create Game</button>
             </form>
         </article>
     </main>
