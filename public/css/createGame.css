@@ -16,9 +16,11 @@ button {
 }
 
 ul {
-    color: var(--text-color);
-    background-color: var(--background-color-secondary);
     min-height: 3rem;
+}
+
+li {
+    color: black;
 }
 
 .right-margin {
@@ -39,9 +41,6 @@ ul {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-
-.flex-container {
     width: 100vw;
 }
 
@@ -129,6 +128,7 @@ ul {
     .teams-container {
         flex-direction: row;
         gap: 3rem;
+        align-items: flex-start;
     }
 
     #team1,
