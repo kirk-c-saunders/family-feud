@@ -1,6 +1,7 @@
 import express from 'express'
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cors from 'cors';
 /*
     For all route files include
         import [routeFileVariableName] from '[path to file with extension]';
@@ -21,6 +22,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.use(cors({origin: '127.0.0.1:8080'}));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(logger);
