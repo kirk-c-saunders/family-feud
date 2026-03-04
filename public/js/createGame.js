@@ -1,4 +1,4 @@
-import { apiUrlRoot, hostCodeLocalStorageKey } from "./globalVariables.js";
+import { hostCodeLocalStorageKey } from "./globalVariables.js";
 
 const team1NameTextBox = document.getElementById("team-1-name")
 const team1AddPlayerTextBox = document.getElementById("add-team-1-player-textbox");
@@ -32,7 +32,7 @@ document.getElementById("create-game-form").addEventListener("submit", async fun
         players: Array.from(team2PlayerList.children).map(player => player.textContent) //AI Use - Modified Copilot suggestion
     };
 
-    const response = await fetch(`${apiUrlRoot}/api/game`, {
+    const response = await fetch(`./api/game`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(game)
