@@ -8,17 +8,29 @@
 </head>
 <body>
     <main id="main-grid">
-        <h1 id="game-name">Playing Family Feud with Friends</h1>
-        <div id="team-1-mobile" class="team-stats-mobile">
-            <div id="team-1-name-mobile">Team 1</div>
-            <div id="team-1-score-mobile">0</div>
-            <div id="team-1-score-current-player">Kirk</div>
-        </div>
-        <div id="team-2-mobile" class="team-stats-mobile">
-            <div id="team-2-name-mobile">Team 2</div>
-            <div id="team-2-score-mobile">0</div>
-            <div id="team-2-score-current-player">Tori</div>
-        </div>
+        <section id="game-name-teams-and-question">
+            <h1 id="game-name">Playing Family Feud with Friends</h1>
+            <hr id="between-game-name-and-team-stats">
+            <div id="team-1-mobile" class="team-stats-mobile">
+                <div id="team-1-name-mobile">Team 1</div>
+                <div id="team-1-score-mobile">0</div>
+                <div id="team-1-score-current-player">Kirk</div>
+            </div>
+            <div id="team-2-mobile" class="team-stats-mobile">
+                <div id="team-2-name-mobile">Team 2</div>
+                <div id="team-2-score-mobile">0</div>
+                <div id="team-2-score-current-player">Tori</div>
+            </div>
+            <hr id="between-team-stats-and-question">
+            <div id="question">How much wood, would a woodchuck chuck, if a woodchuck could chuck wood?</div>
+        </section>
+        <section id="round-stats">
+            <div id="timer">3:00</div>
+            <!--<div class="divider">|</div>-->
+            <div id="round-score">0</div>
+            <!--<div class="divider">|</div>-->
+            <div id="incorrect-response-count">XXX</div>
+        </section>
     </main>
 
     <script type="module" src="./js/createGame.js"></script>

@@ -3,4 +3,6 @@
     --text-color: white;
     --background-color-secondary: #4f772d; /* used for things like button colors */
     --screen-size-breakpoint: 992px;
+    --boarder-width: 2px;
+    --boarder-style: ridge;
 }

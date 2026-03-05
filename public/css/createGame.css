@@ -80,8 +80,8 @@ li {
     margin-top: 3rem;
     padding: 1rem;
     border-color: var(--text-color);
-    border-width: 2px;
-    border-style:ridge;
+    border-width: var(--boarder-width);
+    border-style: var(--boarder-style);
     width:100%;
     grid-template-areas: "team-grid-header team-grid-header team-grid-header"
                          "team-name-label team-name-label team-name-label"
