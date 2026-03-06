@@ -28,9 +28,7 @@ li {
 }
 
 .white-textbox-boarder {
-    border-color: var(--text-color);
-    border-width: 2px;
-    border-style: inset;
+    border: var(--boarder-width) inset var(--text-color);
     background-color: field;
 }
 
@@ -79,9 +77,7 @@ li {
     display: grid;
     margin-top: 3rem;
     padding: 1rem;
-    border-color: var(--text-color);
-    border-width: var(--boarder-width);
-    border-style: var(--boarder-style);
+    border: var(--boarder-width) var(--boarder-style) var(--text-color);
     width:100%;
     grid-template-areas: "team-grid-header team-grid-header team-grid-header"
                          "team-name-label team-name-label team-name-label"

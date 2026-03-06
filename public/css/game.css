@@ -4,10 +4,7 @@
 body {
     background-color: var(--background-color);
     color: var(--text-color);
-}
-
-.team-stats-mobile {
-    font-size: 1.5rem;
+    font-size: 2rem;
 }
 
 hr {
@@ -15,26 +12,40 @@ hr {
     width: 100%;
 }
 
+.team-stats-mobile {
+    font-size: 1.5rem;
+}
+
+.answer-grid-item {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    width: 100%;
+    align-items: center;
+    padding: 1rem;
+    font-size: 1.5rem;
+}
+
 #main-grid {
     display: flex;
+    width: 100%;
     flex-direction: column;
     align-items: center;
-    border-color: var(--text-color);
-    border-width: var(--boarder-width);
-    border-style: var(--boarder-style);
     text-align: center;
     gap: 1rem;
     padding: 1rem 2rem;
 }
 
+#main-grid > * {
+    width: 100%;
+    padding: 1rem;
+    border: var(--boarder-width) var(--boarder-style) var(--text-color);
+}
+
 #game-name-teams-and-question {
     display: grid;
-    border-color: var(--text-color);
-    border-width: var(--boarder-width);
-    border-style: var(--boarder-style);
     gap: 1rem;
     justify-items: center;
-    justify-content: center;
+    justify-content: space-between;
     align-items: start;
     grid-template-areas:
         "game-name game-name"
@@ -66,12 +77,22 @@ hr {
 
 #question {
     grid-area: question;
-    font-size: 2rem;
 }
 
 #round-stats {
     display: flex;
     justify-content: space-around;
-    width: 100%;
-    font-size: 2rem;
+}
+
+#answer-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+#answer-grid > div:nth-child(2n) {
+    /* resetting all borders to 0 px with the style and color we want */
+    border: 0px var(--boarder-style) var(--text-color);
+    /* then adding the top and bottom borders we want */
+    border-top-width: 2px;
+    border-bottom-width: 2px;
 }
