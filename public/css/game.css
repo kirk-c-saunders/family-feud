@@ -16,20 +16,12 @@ hr {
     font-size: 1.5rem;
 }
 
-.answer-grid-item {
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-    width: 100%;
-    align-items: center;
-    padding: 1rem;
-    font-size: 1.5rem;
+.hover:hover {
+    background-color: var(--background-color-secondary);
 }
 
-.answer-grid-item:hover,
-#incorrect-anwer:hover,
-#team-1-wins-round:hover,
-#team-2-wins-round:hover {
-    background-color: var(--background-color-secondary);
+.hidden-answer {
+    background-color: black;
 }
 
 #main-grid {
@@ -94,6 +86,16 @@ hr {
 #answer-grid {
     display: flex;
     flex-direction: column;
+    padding: 0px;
+}
+
+#answer-grid > div {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    width: 100%;
+    align-items: center;
+    padding: 1rem;
+    font-size: 1.5rem;
 }
 
 #answer-grid > div:nth-child(2n) {
