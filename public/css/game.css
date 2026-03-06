@@ -25,6 +25,13 @@ hr {
     font-size: 1.5rem;
 }
 
+.answer-grid-item:hover,
+#incorrect-anwer:hover,
+#team-1-wins-round:hover,
+#team-2-wins-round:hover {
+    background-color: var(--background-color-secondary);
+}
+
 #main-grid {
     display: flex;
     width: 100%;
