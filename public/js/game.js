@@ -1,4 +1,10 @@
 import { hostCodeLocalStorageKey } from "./globalVariables.js";
+const gameCode = new URLSearchParams(window.location.search).get("gameCode");
+
+if(!gameCode) {
+    console.error("game code is needed in the URL in order to play");
+}
+
 
 document.getElementById("answer-grid").addEventListener("click", (e) => {
     const regex = new RegExp("answer-.*");

@@ -3,6 +3,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from "fs/promises";
+import { type } from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,31 +20,39 @@ async function getAllQuestions() {
     }
 }
 
-export async function getNextQuestion (req, res, next) {
-    try {
+export async function _getNextQuestion(askedQuestions) {
+    try {        
+        const availableQuestions = [];
+
+        if (typeof(askedQuestions) !== typeof([])) {
+            throw new Error("askedQuestions is not an array");
+        }
+
         const allQuestionsRaw = await getAllQuestions();
         const allQuestions = JSON.parse(allQuestionsRaw);
-        
-        if(Object.hasOwn(req.body, 'askedQuestions')) {            
-            const availableQuestions = [];
 
-            for (const question of allQuestions) {
-                if (!req.body.askedQuestions.some(askedQuestion => askedQuestion == question.id)) {
-                    availableQuestions.push(question);
-                }
+        for (const question of allQuestions) {
+            if (!askedQuestions.some(askedQuestion => askedQuestion == question.id)) {
+                availableQuestions.push(question);
             }
+        }
 
-            if(availableQuestions.length >= 1) {
-                return res.status(200).json(availableQuestions[Math.floor(Math.random() * availableQuestions.length)]);
-            } else {
-                return res.status(400).json({error: "No remaining questions available to ask."});
-            }
+        if(availableQuestions.length >= 1) {
+            return availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
         } else {
-            if (allQuestions.length >= 1) {
-                return res.status(200).json(allQuestions[Math.floor(Math.random() * allQuestions.length)]);
-            } else {
-                return res.status(400).json({error: "No questions found to ask"});
-            }
+            throw new Error("No remaining questions available to ask.");
+        }
+    } catch (e) {
+        throw e;
+    }
+}
+
+export async function getNextQuestion (req, res, next) {
+    try {
+        if(Object.hasOwn(req.body || {}, 'askedQuestions')) {
+            return res.status(200).json(await _getNextQuestion(req.body.askedQuestions))
+        } else {
+            return res.status(200).json(await _getNextQuestion([]))
         }
     } catch (e) {
         console.log(e);

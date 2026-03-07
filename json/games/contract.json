@@ -1,7 +1,8 @@
 {
     "askedQuestions": ["guid of first answered question in the game", "and the second", "... and so on"],
     "hostCode": "secret GUID to identify who is the host and who is not",
-    "name": "some string for the game name",
+    "isAuthorizedHost": false,
+	"name": "some string for the game name",
     "round": {
         "incorrectResponseCount": 0,
         "question": {
