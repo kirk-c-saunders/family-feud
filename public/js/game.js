@@ -1,10 +1,11 @@
 import { hostCodeLocalStorageKey } from "./globalVariables.js";
-const gameCode = new URLSearchParams(window.location.search).get("gameCode");
+const publicCode = new URLSearchParams(window.location.search).get("publicCode");
 
-if(!gameCode) {
-    console.error("game code is needed in the URL in order to play");
+if(!publicCode) {
+    console.error("Game's public code is needed in the URL in order to play");
 }
 
+const hostCode = localStorage.getItem(`game-${publicCode}-hostCode`) || "";
 
 document.getElementById("answer-grid").addEventListener("click", (e) => {
     const regex = new RegExp("answer-.*");
@@ -17,3 +18,20 @@ document.getElementById("answer-grid").addEventListener("click", (e) => {
         clickedAnswer.classList.toggle("hidden-answer");
     }
 })
+
+loadPage();
+
+async function loadPage() {
+    const response = await fetch(`./api/game/${publicCode}`, {
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({"hostCode":hostCode})
+    });
+
+    if(!response.ok) {
+        alert("Failed to load game.");
+    } else {
+        const gameData = await response.json();
+        console.log(gameData);
+    }
+}

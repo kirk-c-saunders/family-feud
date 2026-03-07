@@ -32,7 +32,7 @@ document.getElementById("create-game-form").addEventListener("submit", async fun
         players: Array.from(team2PlayerList.children).map(player => player.textContent) //AI Use - Modified Copilot suggestion
     };
 
-    const response = await fetch(`./api/game`, {
+    const response = await fetch(`./api/game/`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(game)
@@ -43,7 +43,7 @@ document.getElementById("create-game-form").addEventListener("submit", async fun
     } else {
         const gameData = await response.json();
         localStorage.setItem(hostCodeLocalStorageKey(gameData.publicCode), gameData.hostCode);
-        window.location.href = `game.html?gameId=${gameData.publicCode}`;
+        window.location.href = `game.html?publicCode=${gameData.publicCode}`;
     }
 })
 
