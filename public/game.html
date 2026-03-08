@@ -8,32 +8,46 @@
 </head>
 <body>
     <main id="main-grid">
-        <section id="game-name-teams-and-question">
-            <h2 id="game-name"></h2>
-            <hr id="between-game-name-and-team-stats">
-            <div id="team-1-mobile" class="team-stats-mobile">
-                <div id="team-1-name-mobile"></div>
-                <div id="team-1-score-mobile"></div>
-                <div id="team-1-current-player-mobile"></div>
-            </div>
-            <div id="team-2-mobile" class="team-stats-mobile">
-                <div id="team-2-name-mobile"></div>
-                <div id="team-2-score-mobile"></div>
-                <div id="team-2-current-player-mobile"></div>
-            </div>
-            <hr id="between-team-stats-and-question">
-            <div id="question"></div>
-        </section>
-        <section id="round-stats">
-            <div id="timer"></div>
-            <div id="round-score"></div>
-            <div id="incorrect-response-count"></div>
-        </section>
-        <section id="answer-grid">
-        </section>
-        <div id="incorrect-anwer" class="hover">Incorrect Answer</div>
-        <div id="team-1-wins-round" class="hover">[Team 1] Wins Round</div>
-        <div id="team-2-wins-round" class="hover">[Team 2] Wins Round</div>
+        <div id="team-1-desktop">
+            <div id="team-1-name-desktop"></div>
+            <div id="team-1-score-desktop"></div>
+            <div id="team-1-player-list"></div>
+        </div>
+        <div id="desktop-center-column">
+            <section id="game-name-teams-and-question">
+                <h2 id="game-name"></h2>
+                <hr id="between-game-name-and-team-stats">
+                <div id="team-1-mobile" class="team-stats-mobile">
+                    <div id="team-1-name-mobile"></div>
+                    <div id="team-1-score-mobile"></div>
+                    <div id="team-1-current-player-mobile"></div>
+                </div>
+                <div id="team-2-mobile" class="team-stats-mobile">
+                    <div id="team-2-name-mobile"></div>
+                    <div id="team-2-score-mobile"></div>
+                    <div id="team-2-current-player-mobile"></div>
+                </div>
+                <hr id="between-team-stats-and-question">
+                <div id="question"></div>
+            </section>
+            <section id="round-stats">
+                <div id="timer"></div>
+                <div id="round-score"></div>
+                <div id="incorrect-response-count"></div>
+            </section>
+            <section id="answer-grid">
+            </section>
+        </div>
+        <div id="team-2-desktop">
+            <div id="team-2-name-desktop"></div>
+            <div id="team-2-score-desktop"></div>
+            <div id="team-2-player-list"></div> 
+        </div>
+        <div id="button-container">
+            <div id="incorrect-anwer" class="hover">Incorrect Answer</div>
+            <div id="team-1-wins-round" class="hover">[Team 1] Wins Round</div>
+            <div id="team-2-wins-round" class="hover">[Team 2] Wins Round</div>
+        </div>
     </main>
 
     <script type="module" src="./js/game.js"></script>
