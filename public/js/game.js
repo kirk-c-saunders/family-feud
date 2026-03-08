@@ -1,5 +1,7 @@
 import { hostCodeLocalStorageKey } from "./globalVariables.js";
 const publicCode = new URLSearchParams(window.location.search).get("publicCode");
+let gameData = {};
+const answerGrid = document.getElementById("answer-grid");
 
 if(!publicCode) {
     console.error("Game's public code is needed in the URL in order to play");
@@ -7,7 +9,7 @@ if(!publicCode) {
 
 const hostCode = localStorage.getItem(`game-${publicCode}-hostCode`) || "";
 
-document.getElementById("answer-grid").addEventListener("click", (e) => {
+answerGrid.addEventListener("click", (e) => {
     const regex = new RegExp("answer-.*");
 
     if(regex.test(e.target.id))
@@ -22,16 +24,98 @@ document.getElementById("answer-grid").addEventListener("click", (e) => {
 loadPage();
 
 async function loadPage() {
-    const response = await fetch(`./api/game/${publicCode}`, {
+    const queryParameters = new URLSearchParams({
+        publicCode,
+        hostCode
+    });
+    
+    const response = await fetch(`./api/game/?${queryParameters.toString()}`, {
         method: "GET",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({"hostCode":hostCode})
+        headers: {"Content-Type": "application/json"}
     });
 
     if(!response.ok) {
         alert("Failed to load game.");
     } else {
-        const gameData = await response.json();
+        gameData = await response.json();
         console.log(gameData);
     }
+
+    /*
+        Now that we have all the game data we need to replace all the below fields
+        - Game Name
+        - Both Team's: Names, Scores, On Deck Player
+        - Question String
+        - Game Score
+        - Number of Incorrect Responses
+        - Answers
+    */
+    setInnerTextByElementId("game-name", gameData.name);
+    
+    setInnerTextByElementId("team-1-name-mobile", gameData.team1.name);
+    setInnerTextByElementId("team-1-score-mobile", gameData.team1.score);
+    
+    if (gameData.team1.players.length >= 1) {
+        setInnerTextByElementId("team-1-current-player-mobile", gameData.team1.players[gameData.team1.activePlayerIndex]);
+    }
+
+    setInnerTextByElementId("team-2-name-mobile", gameData.team2.name);
+    setInnerTextByElementId("team-2-score-mobile", gameData.team2.score);
+    if (gameData.team2.players.length >= 1) {
+        setInnerTextByElementId("team-2-current-player-mobile", gameData.team2.players[gameData.team2.activePlayerIndex]);
+    }
+
+    setInnerTextByElementId("question", gameData.round.question.question);
+
+    setInnerTextByElementId("timer", "3:00");
+    let roundScore = 0;
+    for (let i = 0; i < gameData.round.question.answers.length; i++) {
+        if(gameData.round.question.answers[i].answered) {
+            roundScore += parseInt(gameData.round.question.answers[i].points);
+        }
+    }
+    setInnerTextByElementId("round-score", roundScore);
+    setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X"));
+
+    for (let i = 0; i < gameData.round.question.answers.length; i++) {
+        addAnswer (gameData.round.question.answers[i], i);
+    }
+
+    setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} Wins Round`);
+    setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} Wins Round`);
+}
+
+function setInnerTextByElementId (elementId, innerTextValue) {
+    document.getElementById(elementId).innerText = innerTextValue;
+}
+
+function addAnswer (answer, answerNumber) {
+    /*
+        Each answer is structured like so:
+
+        <div id="answer-1" class="hover hidden-answer">
+            <div id="answer-1-text">As much as they want</div>
+            <div id="answer-1-points">50</div>
+        </div>
+    */
+
+    const text = document.createElement("div");
+    const points = document.createElement("div");
+    const wrapper = document.createElement("div");
+
+    text.innerText = answer.text || "";
+    text.id = `answer-${answerNumber}-text`;
+
+    points.innerText = answer.points || "";
+    points.id = `answer-${answerNumber}-points`;
+    
+    wrapper.id = `answer-${answerNumber}`;
+    wrapper.classList.add("hover");
+    if(!answer.answered) {
+        wrapper.classList.add("hidden-answer");
+    }
+    wrapper.appendChild(text);
+    wrapper.appendChild(points);
+
+    answerGrid.appendChild(wrapper);
 }

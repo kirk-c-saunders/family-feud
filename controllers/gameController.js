@@ -70,6 +70,7 @@ export async function createGame(req, res, next) {
         game.teamInControl = 1;
 
         game.round.question = await getNextQuestionForGame(game.askedQuestions);
+        game.round.incorrectResponseCount = 0;
 
         await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
         

@@ -96,6 +96,8 @@ hr {
     align-items: center;
     padding: 1rem;
     font-size: 1.5rem;
+    /* so that unanswered answers are the same height for players when there is no text */
+    min-height: 4.5rem;
 }
 
 #answer-grid > div:nth-child(2n) {
