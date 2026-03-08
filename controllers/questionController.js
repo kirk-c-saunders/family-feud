@@ -20,7 +20,7 @@ async function getAllQuestions() {
     }
 }
 
-export async function _getNextQuestion(askedQuestions) {
+export async function getNextQuestion(askedQuestions) {
     try {        
         const availableQuestions = [];
 
@@ -44,20 +44,5 @@ export async function _getNextQuestion(askedQuestions) {
         }
     } catch (e) {
         throw e;
-    }
-}
-
-export async function getNextQuestion (req, res, next) {
-    try {
-        if(Object.hasOwn(req.body || {}, 'askedQuestions')) {
-            return res.status(200).json(await _getNextQuestion(req.body.askedQuestions))
-        } else {
-            return res.status(200).json(await _getNextQuestion([]))
-        }
-    } catch (e) {
-        console.log(e);
-        const error = new Error(e);
-        error.status = 500;
-        return next(error);
     }
 }

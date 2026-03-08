@@ -1,9 +1,10 @@
 "use strict";
 
 import path from 'path';
-import { fileURLToPath } from 'url';
-import {_getNextQuestion} from './questionController.js';
+import { fileURLToPath, parse } from 'url';
+import {getNextQuestion} from './questionController.js';
 import fs from "fs/promises";
+import { url } from 'inspector';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,8 +13,8 @@ function gameFilePath(publicCode) {
     return path.join(__dirname, "../", "json", "games", `${publicCode}.json`);
 }
 
-async function getNextQuestion(askedQuestions) {
-    const question = await _getNextQuestion(askedQuestions);
+async function getNextQuestionForGame(askedQuestions) {
+    const question = await getNextQuestion(askedQuestions);
 
     question.answers.forEach(answer => {
         answer.answered = false;
@@ -68,7 +69,7 @@ export async function createGame(req, res, next) {
         game.team2 = team2;
         game.teamInControl = 1;
 
-        game.round.question = await getNextQuestion(game.askedQuestions);
+        game.round.question = await getNextQuestionForGame(game.askedQuestions);
 
         await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
         
@@ -82,7 +83,8 @@ export async function createGame(req, res, next) {
 
 export async function loadGame(req, res, next) {
     try {
-        const publicCode = req.params.publicCode;
+        const queryParameters = parse(req.url, true).query;
+        const publicCode = queryParameters.publicCode;
         let gameRaw = "";
         
         try {
@@ -94,14 +96,14 @@ export async function loadGame(req, res, next) {
         }
 
         const game = JSON.parse(gameRaw);
-        
-        if(Object.hasOwn(req.body || {}, "hostCode")) {
-            game.isAuthorizedHost = req.body.hostCode === game.hostCode ? true : false;
+        delete game.round.question.id; //remove the question's ID from the output since the game doesn't need it
+        delete game.askedQuestions; //remove the list of asked questions since the player/host doesn't need it
+
+        if(Object.hasOwn(queryParameters || {}, "hostCode")) {
+            game.isAuthorizedHost = queryParameters.hostCode === game.hostCode ? true : false;
         } else {
             game.isAuthorizedHost = false;
         }
-
-        console.log(game.isAuthorizedHost);
 
         delete game.hostCode; //remove the hostCode property once we are done processing it so we don't risk sharing it.
         
@@ -118,7 +120,6 @@ export async function loadGame(req, res, next) {
             });
         }
 
-        delete game.round.question.id; //remove the question's ID from the output since the game doesn't need it
         res.status(200).json(game);
     } catch (e) {
         const error = new Error(`Error loading game: ${e}`);
