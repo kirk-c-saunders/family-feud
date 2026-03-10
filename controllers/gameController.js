@@ -13,6 +13,17 @@ function gameFilePath(publicCode) {
     return path.join(__dirname, "../", "json", "games", `${publicCode}.json`);
 }
 
+async function readGameFile(publicCode) {
+    try {
+        const gameRaw = await fs.readFile(gameFilePath(publicCode));
+        return JSON.parse(gameRaw);
+    } catch {
+        const error = new Error(`A game with the code of ${publicCode} was not found`);
+        error.status = 404;
+        return next(error);
+    }
+}
+
 async function getNextQuestionForGame(askedQuestions) {
     const question = await getNextQuestion(askedQuestions);
 
@@ -86,17 +97,9 @@ export async function loadGame(req, res, next) {
     try {
         const queryParameters = parse(req.url, true).query;
         const publicCode = queryParameters.publicCode;
-        let gameRaw = "";
-        
-        try {
-            gameRaw = await fs.readFile(gameFilePath(publicCode));
-        } catch {
-            const error = new Error(`A game with the code of ${publicCode} was not found`);
-            error.status = 404;
-            return next(error);
-        }
 
-        const game = JSON.parse(gameRaw);
+        const game = await readGameFile(publicCode);
+        
         delete game.round.question.id; //remove the question's ID from the output since the game doesn't need it
         delete game.askedQuestions; //remove the list of asked questions since the player/host doesn't need it
 
@@ -127,5 +130,53 @@ export async function loadGame(req, res, next) {
         error.status = 500;
         return next(error);
     }
+}
 
+export async function revealOrHideAnswer (req, res, next) {
+    try {
+        const publicCode = req.param.publicCode;
+        let hostCode = "";
+        
+        if(!Object.hasOwn(req.body, 'isReveal')){
+            const error = new Error(`isReveal is Required`);
+            error.status = 400;
+            return next(error);
+        }
+        const isReveal = req.body.isReveal;
+
+        if(!Object.hasOwn(req.body, 'answerIndex')){
+            const error = new Error(`answer index is Required`);
+            error.status = 400;
+            return next(error);
+        }
+        const answerIndex = parseInt(req.body.answerIndex);
+        
+        if(Object.hasOwn(req.body, 'hostCode')){
+            hostCode = req.body.hostCode;
+        }
+
+        const game = await readGameFile(publicCode);
+
+        if(hostCode !== game.hostCode) {
+            const error = new Error(`Incorrect Host Code`);
+            error.status = 400;
+            return next(error);
+        }
+
+        if(answerIndex < 0 || game.round.question.answers.length <= answerIndex) {
+            const error = new Error(`Provided answer number does not exist on the game's current question`);
+            error.status = 400;
+            return next(error);
+        }
+
+        game.round.question.answers[answerIndex].answered = isReveal;
+
+        await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
+        
+        res.status(200).json({answerIndex: answerIndex, isReveal: isReveal});
+    } catch (e) {
+        const error = new Error(`Error revealing or hiding answer: ${e}`);
+        error.status = 500;
+        return next(error);
+    }
 }
