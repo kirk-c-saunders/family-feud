@@ -90,8 +90,8 @@ async function loadPage() {
         addAnswer (gameData.round.question.answers[i], i);
     }
 
-    setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} Wins Round`);
-    setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} Wins Round`);
+    setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} - Wins Round`);
+    setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} - Wins Round`);
 }
 
 function setInnerTextByElementId (elementId, innerTextValue) {
