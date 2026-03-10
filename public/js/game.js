@@ -38,7 +38,6 @@ async function loadPage() {
         alert("Failed to load game.");
     } else {
         gameData = await response.json();
-        console.log(gameData);
     }
 
     /*
@@ -54,16 +53,26 @@ async function loadPage() {
     
     setInnerTextByElementId("team-1-name-mobile", gameData.team1.name);
     setInnerTextByElementId("team-1-score-mobile", gameData.team1.score);
-    
     if (gameData.team1.players.length >= 1) {
         setInnerTextByElementId("team-1-current-player-mobile", gameData.team1.players[gameData.team1.activePlayerIndex]);
     }
+
+    setInnerTextByElementId("team-1-name-desktop", gameData.team1.name);
+    setInnerTextByElementId("team-1-score-desktop", gameData.team1.score);
+    addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
+
 
     setInnerTextByElementId("team-2-name-mobile", gameData.team2.name);
     setInnerTextByElementId("team-2-score-mobile", gameData.team2.score);
     if (gameData.team2.players.length >= 1) {
         setInnerTextByElementId("team-2-current-player-mobile", gameData.team2.players[gameData.team2.activePlayerIndex]);
     }
+
+    setInnerTextByElementId("team-2-name-desktop", gameData.team2.name);
+    setInnerTextByElementId("team-2-score-desktop", gameData.team2.score);
+    addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
+
+    assignControlToTeam(gameData.teamInControl);
 
     setInnerTextByElementId("question", gameData.round.question.question);
 
@@ -98,7 +107,6 @@ function addAnswer (answer, answerNumber) {
             <div id="answer-1-points">50</div>
         </div>
     */
-
     const text = document.createElement("div");
     const points = document.createElement("div");
     const wrapper = document.createElement("div");
@@ -118,4 +126,42 @@ function addAnswer (answer, answerNumber) {
     wrapper.appendChild(points);
 
     answerGrid.appendChild(wrapper);
+}
+
+function addPlayersToDesktopPlayerList (teamNumber, playerList, activePlayerIndex = 0) {
+    /*
+        A completed team list should look something like:
+        <ul id="team-1-player-list">
+            <li id="team-1-player-1" class="selected-player">Kirk</li>
+            <li id="team-1-player-2">Clifford</li>
+            <li id="team-1-player-3">Saunders</li>
+        </ul>
+    */
+    const listElement = document.getElementById(`team-${teamNumber}-player-list`);
+
+    for (let i = 0; i < playerList.length; i++) {
+        const player = document.createElement("li");
+        player.id = `team-${teamNumber}-player-${i}`;
+        player.innerText = playerList[i];
+
+        if(i===activePlayerIndex) {
+            player.classList.add("selected-player");
+        }
+
+        listElement.appendChild(player);
+    }
+}
+
+function assignControlToTeam (teamNumber) {
+    if (teamNumber === 1) {
+        document.getElementById("team-1-mobile").classList.add("team-in-control");
+        document.getElementById("team-1-desktop").classList.add("team-in-control");
+        document.getElementById("team-2-mobile").classList.remove("team-in-control");
+        document.getElementById("team-2-desktop").classList.remove("team-in-control");
+    } else {
+        document.getElementById("team-1-mobile").classList.remove("team-in-control");
+        document.getElementById("team-1-desktop").classList.remove("team-in-control");
+        document.getElementById("team-2-mobile").classList.add("team-in-control");
+        document.getElementById("team-2-desktop").classList.add("team-in-control");
+    }
 }

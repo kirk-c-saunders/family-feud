@@ -12,8 +12,22 @@ hr {
     width: 100%;
 }
 
+.border-on-all-direct-children > * {
+    padding: 1rem;
+    border: var(--boarder-width) var(--boarder-style) var(--text-color);
+}
+
+.team-in-control {
+    background-color: var(--background-color-secondary);
+}
+
 .team-stats-mobile {
     font-size: 1.5rem;
+    padding: 1rem;
+}
+
+.team-stats-desktop {
+    display: none;
 }
 
 .hover:hover {
@@ -39,12 +53,6 @@ hr {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
-
-#button-container > *,
-#desktop-center-column > * {
-    padding: 1rem;
-    border: var(--boarder-width) var(--boarder-style) var(--text-color);
 }
 
 #desktop-center-column > * {
@@ -124,39 +132,38 @@ hr {
     padding: 0px;
 }
 
-#team-1-desktop,
-#team-2-desktop {
-    display: none;
-}
-
-#team-1-desktop {
-    grid-area: team-1-desktop;
-}
-
-#team-2-desktop {
-    grid-area: team-2-desktop;
-}
-
 @media (min-width: 992px) {
     #main-grid {
         display: grid;
         grid-template-columns: 1fr 3fr 1fr;
         grid-template-areas: "team-1-desktop desktop-center-column team-2-desktop"
                               "button-container button-container button-container";
+        align-items: start;
     }
     
-    #between-game-name-and-team-stats,
-    #team-1-mobile,
-    #team-2-mobile {
+    .mobile-only {
         display: none;
     }
 
-    #team-1-desktop,
-    #team-2-desktop {
+    .selected-player {
+        border: var(--boarder-width) var(--boarder-style) var(--text-color);
+    }
+
+    .team-stats-desktop {
         display: flex;
         flex-direction: column;
         gap: 1rem;
         width: 100%;
+        padding: 1rem;
+        border: var(--boarder-width) var(--boarder-style) var(--text-color);
+    }
+
+    #team-1-desktop {
+        grid-area: team-1-desktop;
+    }
+
+    #team-2-desktop {
+        grid-area: team-2-desktop;
     }
 
     #game-name-teams-and-question {
