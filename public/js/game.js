@@ -1,6 +1,5 @@
 import { hostCodeLocalStorageKey } from "./globalVariables.js";
 const publicCode = new URLSearchParams(window.location.search).get("publicCode");
-let gameData = {};
 const answerGrid = document.getElementById("answer-grid");
 
 if(!publicCode) {
@@ -8,6 +7,8 @@ if(!publicCode) {
 }
 
 const hostCode = localStorage.getItem(`game-${publicCode}-hostCode`) || "";
+
+const gameData = await populateGameData();
 
 answerGrid.addEventListener("click", (e) => {
     const regex = new RegExp("answer-.*");
@@ -23,12 +24,12 @@ answerGrid.addEventListener("click", (e) => {
 
 loadPage();
 
-async function loadPage() {
+async function populateGameData() {
     const queryParameters = new URLSearchParams({
         publicCode,
         hostCode
     });
-    
+
     const response = await fetch(`./api/game/?${queryParameters.toString()}`, {
         method: "GET",
         headers: {"Content-Type": "application/json"}
@@ -37,9 +38,11 @@ async function loadPage() {
     if(!response.ok) {
         alert("Failed to load game.");
     } else {
-        gameData = await response.json();
+        return await response.json();
     }
+}
 
+async function loadPage() {
     /*
         Now that we have all the game data we need to replace all the below fields
         - Game Name
