@@ -134,7 +134,7 @@ export async function loadGame(req, res, next) {
 
 export async function revealOrHideAnswer (req, res, next) {
     try {
-        const publicCode = req.param.publicCode;
+        const publicCode = req.params.publicCode;
         let hostCode = "";
         
         if(!Object.hasOwn(req.body, 'isReveal')){
