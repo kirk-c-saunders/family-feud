@@ -1,6 +1,7 @@
 import { hostCodeLocalStorageKey } from "./globalVariables.js";
 const publicCode = new URLSearchParams(window.location.search).get("publicCode");
 const answerGrid = document.getElementById("answer-grid");
+let interval;
 
 if(!publicCode) {
     console.error("Game's public code is needed in the URL in order to play");
@@ -9,6 +10,7 @@ if(!publicCode) {
 const hostCode = localStorage.getItem(hostCodeLocalStorageKey(publicCode)) || "";
 
 const gameData = await populateGameData();
+await initialPageLoad();
 
 if (gameData.isAuthorizedHost) {
     answerGrid.addEventListener("click", async (e) => {
@@ -33,9 +35,10 @@ if (gameData.isAuthorizedHost) {
             setInnerTextByElementId("round-score", calculateRoundScore());
         }
     })
-}
-
-loadPage();
+} 
+//else {
+//    refreshPageLoop();
+//}
 
 async function populateGameData() {
     const queryParameters = new URLSearchParams({
@@ -55,36 +58,34 @@ async function populateGameData() {
     }
 }
 
-async function loadPage() {
+async function pageRefresh(refreshGameData = true) {
+    console.log("triggered page refresh function");
+    
+    if (refreshGameData) {
+        Object.assign(gameData, await populateGameData());
+    }
+
     /*
         Now that we have all the game data we need to replace all the below fields
-        - Game Name
-        - Both Team's: Names, Scores, On Deck Player
+        - Both Team's: Scores, On Deck Player
+        - Team in control
         - Question String
         - Game Score
         - Number of Incorrect Responses
         - Answers
     */
-    setInnerTextByElementId("game-name", gameData.name);
-    
-    setInnerTextByElementId("team-1-name-mobile", gameData.team1.name);
+
     setInnerTextByElementId("team-1-score-mobile", gameData.team1.score);
     if (gameData.team1.players.length >= 1) {
         setInnerTextByElementId("team-1-current-player-mobile", gameData.team1.players[gameData.team1.activePlayerIndex]);
     }
-
-    setInnerTextByElementId("team-1-name-desktop", gameData.team1.name);
     setInnerTextByElementId("team-1-score-desktop", gameData.team1.score);
     addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
 
-
-    setInnerTextByElementId("team-2-name-mobile", gameData.team2.name);
     setInnerTextByElementId("team-2-score-mobile", gameData.team2.score);
     if (gameData.team2.players.length >= 1) {
         setInnerTextByElementId("team-2-current-player-mobile", gameData.team2.players[gameData.team2.activePlayerIndex]);
     }
-
-    setInnerTextByElementId("team-2-name-desktop", gameData.team2.name);
     setInnerTextByElementId("team-2-score-desktop", gameData.team2.score);
     addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
 
@@ -97,9 +98,35 @@ async function loadPage() {
     setInnerTextByElementId("round-score", calculateRoundScore());
     setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X"));
 
-    for (let i = 0; i < gameData.round.question.answers.length; i++) {
-        addAnswer (gameData.round.question.answers[i], i);
+    setAnswersGrid(false);
+}
+
+async function refreshPageLoop () {
+    try {
+        console.log("starting page refresh in loop function")
+        await refreshPageLoop();
+    } catch (e) {
+        console.error('Error in page refresh in loop function:', e);
     }
+
+    setTimeout(refreshPageLoop, 1500);
+}
+
+async function initialPageLoad() {
+    /*
+        Now that we have all the game data we need to replace all the below fields
+        - Game Name
+        - Both Team's: Names
+
+        Then manage the buttons (are they available or not)
+    */
+    setInnerTextByElementId("game-name", gameData.name);
+    
+    setInnerTextByElementId("team-1-name-mobile", gameData.team1.name);
+    setInnerTextByElementId("team-1-name-desktop", gameData.team1.name);
+
+    setInnerTextByElementId("team-2-name-mobile", gameData.team2.name);
+    setInnerTextByElementId("team-2-name-desktop", gameData.team2.name);
 
     if(gameData.isAuthorizedHost) {
         setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} - Wins Round`);
@@ -109,10 +136,20 @@ async function loadPage() {
         document.getElementById("incorrect-anwer").remove();
         document.getElementById("team-2-wins-round").remove();
     }
+
+    pageRefresh();
 }
 
 function setInnerTextByElementId (elementId, innerTextValue) {
     document.getElementById(elementId).innerText = innerTextValue;
+}
+
+function setAnswersGrid () {
+    answerGrid.replaceChildren();
+    
+    for (let i = 0; i < gameData.round.question.answers.length; i++) {
+        addAnswer (gameData.round.question.answers[i], i);
+    }
 }
 
 function addAnswer (answer, answerNumber) {
@@ -124,27 +161,37 @@ function addAnswer (answer, answerNumber) {
             <div id="answer-1-points">50</div>
         </div>
     */
-    const text = document.createElement("div");
-    const points = document.createElement("div");
-    const wrapper = document.createElement("div");
+    const textId = `answer-${answerNumber}-text`;
+    const pointsId = `answer-${answerNumber}-points`;
+    const wrapperId = `answer-${answerNumber}`;
 
-    text.innerText = answer.text || "";
-    text.id = `answer-${answerNumber}-text`;
+    let text = document.getElementById(textId);
+    let points = document.getElementById(pointsId);
+    let wrapper = document.getElementById(wrapperId);
 
-    points.innerText = answer.points || "";
-    points.id = `answer-${answerNumber}-points`;
-    
-    wrapper.id = `answer-${answerNumber}`;
-    if (gameData.isAuthorizedHost) {
-        wrapper.classList.add("hover");
+    if(!wrapper) {
+        text = document.createElement("div");
+        points = document.createElement("div");
+        wrapper = document.createElement("div");
+
+        text.innerText = answer.text || "";
+        text.id = textId;
+
+        points.innerText = answer.points || "";
+        points.id = pointsId;
+        
+        wrapper.id = wrapperId;
+        if (gameData.isAuthorizedHost) {
+            wrapper.classList.add("hover");
+        }
+        if(!answer.answered) {
+            wrapper.classList.add("hidden-answer");
+        }
+        wrapper.appendChild(text);
+        wrapper.appendChild(points);
+
+        answerGrid.appendChild(wrapper);
     }
-    if(!answer.answered) {
-        wrapper.classList.add("hidden-answer");
-    }
-    wrapper.appendChild(text);
-    wrapper.appendChild(points);
-
-    answerGrid.appendChild(wrapper);
 }
 
 function addPlayersToDesktopPlayerList (teamNumber, playerList, activePlayerIndex = 0) {
@@ -157,6 +204,8 @@ function addPlayersToDesktopPlayerList (teamNumber, playerList, activePlayerInde
         </ul>
     */
     const listElement = document.getElementById(`team-${teamNumber}-player-list`);
+
+    listElement.replaceChildren();
 
     for (let i = 0; i < playerList.length; i++) {
         const player = document.createElement("li");
