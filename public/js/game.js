@@ -6,21 +6,34 @@ if(!publicCode) {
     console.error("Game's public code is needed in the URL in order to play");
 }
 
-const hostCode = localStorage.getItem(`game-${publicCode}-hostCode`) || "";
+const hostCode = localStorage.getItem(hostCodeLocalStorageKey(publicCode)) || "";
 
 const gameData = await populateGameData();
 
-answerGrid.addEventListener("click", (e) => {
-    const regex = new RegExp("answer-.*");
+if (gameData.isAuthorizedHost) {
+    answerGrid.addEventListener("click", async (e) => {
+        const regex = new RegExp("answer-.*");
 
-    if(regex.test(e.target.id))
-    {
-        const targetIdSplit = e.target.id.split('-');
-        const clickedAnswer = document.getElementById(`${targetIdSplit[0]}-${targetIdSplit[1]}`);
-        const answerNumber = parseInt(targetIdSplit[1], 10);
-        clickedAnswer.classList.toggle("hidden-answer");
-    }
-})
+        if(regex.test(e.target.id))
+        {
+            const targetIdSplit = e.target.id.split('-');
+            const clickedAnswer = document.getElementById(`${targetIdSplit[0]}-${targetIdSplit[1]}`);
+            const answerIndex = parseInt(targetIdSplit[1], 10);
+
+            if(!gameData.round.question.answers[answerIndex].answered) {
+                await revealOrHideAnswer (answerIndex, true);
+                gameData.round.question.answers[answerIndex].answered = true;
+                clickedAnswer.classList.remove("hidden-answer");
+            } else {
+                await revealOrHideAnswer (answerIndex, false);
+                gameData.round.question.answers[answerIndex].answered = false;
+                clickedAnswer.classList.add("hidden-answer");
+            }
+
+            setInnerTextByElementId("round-score", calculateRoundScore());
+        }
+    })
+}
 
 loadPage();
 
@@ -80,21 +93,22 @@ async function loadPage() {
     setInnerTextByElementId("question", gameData.round.question.question);
 
     setInnerTextByElementId("timer", "3:00");
-    let roundScore = 0;
-    for (let i = 0; i < gameData.round.question.answers.length; i++) {
-        if(gameData.round.question.answers[i].answered) {
-            roundScore += parseInt(gameData.round.question.answers[i].points);
-        }
-    }
-    setInnerTextByElementId("round-score", roundScore);
+    
+    setInnerTextByElementId("round-score", calculateRoundScore());
     setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X"));
 
     for (let i = 0; i < gameData.round.question.answers.length; i++) {
         addAnswer (gameData.round.question.answers[i], i);
     }
 
-    setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} - Wins Round`);
-    setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} - Wins Round`);
+    if(gameData.isAuthorizedHost) {
+        setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} - Wins Round`);
+        setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} - Wins Round`);
+    } else {
+        document.getElementById("team-1-wins-round").remove();
+        document.getElementById("incorrect-anwer").remove();
+        document.getElementById("team-2-wins-round").remove();
+    }
 }
 
 function setInnerTextByElementId (elementId, innerTextValue) {
@@ -121,7 +135,9 @@ function addAnswer (answer, answerNumber) {
     points.id = `answer-${answerNumber}-points`;
     
     wrapper.id = `answer-${answerNumber}`;
-    wrapper.classList.add("hover");
+    if (gameData.isAuthorizedHost) {
+        wrapper.classList.add("hover");
+    }
     if(!answer.answered) {
         wrapper.classList.add("hidden-answer");
     }
@@ -166,5 +182,31 @@ function assignControlToTeam (teamNumber) {
         document.getElementById("team-1-desktop").classList.remove("team-in-control");
         document.getElementById("team-2-mobile").classList.add("team-in-control");
         document.getElementById("team-2-desktop").classList.add("team-in-control");
+    }
+}
+
+function calculateRoundScore () {
+    let roundScore = 0;
+
+    for (let i = 0; i < gameData.round.question.answers.length; i++) {
+        if(gameData.round.question.answers[i].answered) {
+            roundScore += parseInt(gameData.round.question.answers[i].points);
+        }
+    }
+
+    return roundScore;
+}
+
+async function revealOrHideAnswer (answerIndex, isReveal) {
+    const response = await fetch(`./api/game/revealOrHideAnswer/${publicCode}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({hostCode, isReveal, answerIndex})
+    });
+
+    if(!response.ok) {
+        alert("Failed to update answer.");
+    } else {
+        return await response.json();
     }
 }
