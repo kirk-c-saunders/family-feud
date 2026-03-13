@@ -1,7 +1,6 @@
 import { hostCodeLocalStorageKey } from "./globalVariables.js";
 const publicCode = new URLSearchParams(window.location.search).get("publicCode");
 const answerGrid = document.getElementById("answer-grid");
-let interval;
 
 if(!publicCode) {
     console.error("Game's public code is needed in the URL in order to play");
@@ -36,9 +35,9 @@ if (gameData.isAuthorizedHost) {
         }
     })
 } 
-//else {
-//    refreshPageLoop();
-//}
+else {
+    await refreshPageLoop();
+}
 
 async function populateGameData() {
     const queryParameters = new URLSearchParams({
@@ -104,7 +103,7 @@ async function pageRefresh(refreshGameData = true) {
 async function refreshPageLoop () {
     try {
         console.log("starting page refresh in loop function")
-        await refreshPageLoop();
+        await pageRefresh();
     } catch (e) {
         console.error('Error in page refresh in loop function:', e);
     }
@@ -137,7 +136,7 @@ async function initialPageLoad() {
         document.getElementById("team-2-wins-round").remove();
     }
 
-    pageRefresh();
+    await pageRefresh();
 }
 
 function setInnerTextByElementId (elementId, innerTextValue) {
