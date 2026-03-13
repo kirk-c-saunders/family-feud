@@ -1,0 +1,28 @@
+@import "reset.css";
+@import "globalVariables.css"; /* Access variable with  var(--[variable-name]) */
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+button {
+    color: var(--text-color);
+    background-color: var(--background-color-secondary);
+    padding: 1rem;
+}
+
+.white-textbox-boarder {
+    border: var(--boarder-width) inset var(--text-color);
+    background-color: field;
+}
