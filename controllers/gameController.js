@@ -4,7 +4,6 @@ import path from 'path';
 import { fileURLToPath, parse } from 'url';
 import {getNextQuestion} from './questionController.js';
 import fs from "fs/promises";
-import { url } from 'inspector';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,6 +31,47 @@ async function getNextQuestionForGame(askedQuestions) {
     });
 
     return question;
+}
+
+function updateActivePlayer (game, isNextPlayer = true) {
+    if (typeof isNextPlayer !== "boolean") {
+        throw new Error("Improper value for isNextPlayer");
+    }
+
+    let activePlayerIndex;
+    let totalPlayerCount;
+
+    if (game.teamInControl === 1) {
+        activePlayerIndex = game.team1.activePlayerIndex;
+        totalPlayerCount = game.team1.players.length;
+    } else { //implicit - game.teamInControl === 2
+        activePlayerIndex = game.team2.activePlayerIndex;
+        totalPlayerCount = game.team2.players.length;
+    }
+
+    if (totalPlayerCount < 1) {
+        activePlayerIndex = 0;
+    } else if(isNextPlayer) {
+        activePlayerIndex++;
+        if (activePlayerIndex >= totalPlayerCount) {
+            activePlayerIndex = 0;
+        }
+    } else {
+        activePlayerIndex--;
+        if(activePlayerIndex < 0) {
+            activePlayerIndex = totalPlayerCount - 1;
+        }
+    }
+
+    if (game.teamInControl === 1) {
+        game.team1.activePlayerIndex = activePlayerIndex;
+    } else { //implicit - gameData.teamInControl === 2
+        game.team2.activePlayerIndex = activePlayerIndex;
+    }
+}
+
+async function updateGameDataFile(publicCode, game) {
+    await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
 }
 
 export async function createGame(req, res, next) {
@@ -83,7 +123,7 @@ export async function createGame(req, res, next) {
         game.round.question = await getNextQuestionForGame(game.askedQuestions);
         game.round.incorrectResponseCount = 0;
 
-        await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
+        updateGameDataFile(publicCode, game);
         
         res.status(200).json({publicCode: publicCode, hostCode: hostCode});
     } catch (e) {
@@ -171,7 +211,9 @@ export async function revealOrHideAnswer (req, res, next) {
 
         game.round.question.answers[answerIndex].answered = isReveal;
 
-        await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
+        updateActivePlayer (game, isReveal)
+
+        updateGameDataFile(publicCode, game);
         
         res.status(200).json({answerIndex: answerIndex, isReveal: isReveal});
     } catch (e) {
