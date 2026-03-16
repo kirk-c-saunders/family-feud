@@ -39,118 +39,6 @@ else {
     await refreshPageLoop();
 }
 
-async function populateGameData() {
-    const queryParameters = new URLSearchParams({
-        publicCode,
-        hostCode
-    });
-
-    const response = await fetch(`./api/game/?${queryParameters.toString()}`, {
-        method: "GET",
-        headers: {"Content-Type": "application/json"}
-    });
-
-    if(!response.ok) {
-        alert("Failed to load game.");
-    } else {
-        return await response.json();
-    }
-}
-
-async function pageRefresh(refreshGameData = true) {
-    console.log("triggered page refresh function");
-    
-    if (refreshGameData) {
-        Object.assign(gameData, await populateGameData());
-    }
-
-    /*
-        Now that we have all the game data we need to replace all the below fields
-        - Both Team's: Scores, On Deck Player
-        - Team in control
-        - Question String
-        - Game Score
-        - Number of Incorrect Responses
-        - Answers
-    */
-
-    setInnerTextByElementId("team-1-score-mobile", gameData.team1.score);
-    if (gameData.team1.players.length >= 1) {
-        setInnerTextByElementId("team-1-current-player-mobile", gameData.team1.players[gameData.team1.activePlayerIndex]);
-    }
-    setInnerTextByElementId("team-1-score-desktop", gameData.team1.score);
-    addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
-
-    setInnerTextByElementId("team-2-score-mobile", gameData.team2.score);
-    if (gameData.team2.players.length >= 1) {
-        setInnerTextByElementId("team-2-current-player-mobile", gameData.team2.players[gameData.team2.activePlayerIndex]);
-    }
-    setInnerTextByElementId("team-2-score-desktop", gameData.team2.score);
-    addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
-
-    assignControlToTeam(gameData.teamInControl);
-
-    setInnerTextByElementId("question", gameData.round.question.question);
-
-    setInnerTextByElementId("timer", "3:00");
-    
-    setInnerTextByElementId("round-score", calculateRoundScore());
-    setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X"));
-
-    setAnswersGrid(false);
-}
-
-async function refreshPageLoop () {
-    try {
-        console.log("starting page refresh in loop function")
-        await pageRefresh();
-    } catch (e) {
-        console.error('Error in page refresh in loop function:', e);
-    }
-
-    setTimeout(refreshPageLoop, 1500);
-}
-
-async function initialPageLoad() {
-    /*
-        Now that we have all the game data we need to replace all the below fields
-        - Game Name
-        - Both Team's: Names
-
-        Then manage the buttons (are they available or not)
-    */
-    setInnerTextByElementId("game-name", gameData.name);
-    
-    setInnerTextByElementId("team-1-name-mobile", gameData.team1.name);
-    setInnerTextByElementId("team-1-name-desktop", gameData.team1.name);
-
-    setInnerTextByElementId("team-2-name-mobile", gameData.team2.name);
-    setInnerTextByElementId("team-2-name-desktop", gameData.team2.name);
-
-    if(gameData.isAuthorizedHost) {
-        setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} - Wins Round`);
-        setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} - Wins Round`);
-    } else {
-        document.getElementById("team-1-wins-round").remove();
-        document.getElementById("incorrect-anwer").remove();
-        document.getElementById("team-2-wins-round").remove();
-    }
-
-    await pageRefresh();
-}
-
-function setInnerTextByElementId (elementId, innerTextValue) {
-    document.getElementById(elementId).innerText = innerTextValue;
-}
-
-function setAnswersGrid () {
-    answerGrid.replaceChildren();
-    
-    for (let i = 0; i < gameData.round.question.answers.length; i++) {
-        addAnswer (gameData.round.question.answers[i], i);
-    }
-}
-
 function addAnswer (answer, answerNumber) {
     /*
         Each answer is structured like so:
@@ -245,6 +133,105 @@ function calculateRoundScore () {
     return roundScore;
 }
 
+async function initialPageLoad() {
+    /*
+        Now that we have all the game data we need to replace all the below fields
+        - Game Name
+        - Both Team's: Names
+
+        Then manage the buttons (are they available or not)
+    */
+    setInnerTextByElementId("game-name", gameData.name);
+    
+    setInnerTextByElementId("team-1-name-mobile", gameData.team1.name);
+    setInnerTextByElementId("team-1-name-desktop", gameData.team1.name);
+
+    setInnerTextByElementId("team-2-name-mobile", gameData.team2.name);
+    setInnerTextByElementId("team-2-name-desktop", gameData.team2.name);
+
+    if(gameData.isAuthorizedHost) {
+        setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} - Wins Round`);
+        setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} - Wins Round`);
+    } else {
+        document.getElementById("team-1-wins-round").remove();
+        document.getElementById("incorrect-anwer").remove();
+        document.getElementById("team-2-wins-round").remove();
+    }
+
+    await pageRefresh();
+}
+
+async function pageRefresh(refreshGameData = true) {
+    console.log("triggered page refresh function");
+    
+    if (refreshGameData) {
+        Object.assign(gameData, await populateGameData());
+    }
+
+    /*
+        Now that we have all the game data we need to replace all the below fields
+        - Both Team's: Scores, On Deck Player
+        - Team in control
+        - Question String
+        - Game Score
+        - Number of Incorrect Responses
+        - Answers
+    */
+
+    setInnerTextByElementId("team-1-score-mobile", gameData.team1.score);
+    if (gameData.team1.players.length >= 1) {
+        setInnerTextByElementId("team-1-current-player-mobile", gameData.team1.players[gameData.team1.activePlayerIndex]);
+    }
+    setInnerTextByElementId("team-1-score-desktop", gameData.team1.score);
+    addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
+
+    setInnerTextByElementId("team-2-score-mobile", gameData.team2.score);
+    if (gameData.team2.players.length >= 1) {
+        setInnerTextByElementId("team-2-current-player-mobile", gameData.team2.players[gameData.team2.activePlayerIndex]);
+    }
+    setInnerTextByElementId("team-2-score-desktop", gameData.team2.score);
+    addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
+
+    assignControlToTeam(gameData.teamInControl);
+
+    setInnerTextByElementId("question", gameData.round.question.question);
+
+    setInnerTextByElementId("timer", "3:00");
+    
+    setInnerTextByElementId("round-score", calculateRoundScore());
+    setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X"));
+
+    setAnswersGrid(false);
+}
+
+async function populateGameData() {
+    const queryParameters = new URLSearchParams({
+        publicCode,
+        hostCode
+    });
+
+    const response = await fetch(`./api/game/?${queryParameters.toString()}`, {
+        method: "GET",
+        headers: {"Content-Type": "application/json"}
+    });
+
+    if(!response.ok) {
+        alert("Failed to load game.");
+    } else {
+        return await response.json();
+    }
+}
+
+async function refreshPageLoop () {
+    try {
+        await pageRefresh();
+    } catch (e) {
+        console.error('Error in page refresh in loop function:', e);
+    }
+
+    setTimeout(refreshPageLoop, 1500);
+}
+
 async function revealOrHideAnswer (answerIndex, isReveal) {
     const response = await fetch(`./api/game/revealOrHideAnswer/${publicCode}`, {
         method: "POST",
@@ -256,5 +243,17 @@ async function revealOrHideAnswer (answerIndex, isReveal) {
         alert("Failed to update answer.");
     } else {
         return await response.json();
+    }
+}
+
+function setInnerTextByElementId (elementId, innerTextValue) {
+    document.getElementById(elementId).innerText = innerTextValue;
+}
+
+function setAnswersGrid () {
+    answerGrid.replaceChildren();
+    
+    for (let i = 0; i < gameData.round.question.answers.length; i++) {
+        addAnswer (gameData.round.question.answers[i], i);
     }
 }
