@@ -8,72 +8,6 @@ import fs from "fs/promises";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function gameFilePath(publicCode) {
-    return path.join(__dirname, "../", "json", "games", `${publicCode}.json`);
-}
-
-async function readGameFile(publicCode) {
-    try {
-        const gameRaw = await fs.readFile(gameFilePath(publicCode));
-        return JSON.parse(gameRaw);
-    } catch {
-        const error = new Error(`A game with the code of ${publicCode} was not found`);
-        error.status = 404;
-        return next(error);
-    }
-}
-
-async function getNextQuestionForGame(askedQuestions) {
-    const question = await getNextQuestion(askedQuestions);
-
-    question.answers.forEach(answer => {
-        answer.answered = false;
-    });
-
-    return question;
-}
-
-function updateActivePlayer (game, isNextPlayer = true) {
-    if (typeof isNextPlayer !== "boolean") {
-        throw new Error("Improper value for isNextPlayer");
-    }
-
-    let activePlayerIndex;
-    let totalPlayerCount;
-
-    if (game.teamInControl === 1) {
-        activePlayerIndex = game.team1.activePlayerIndex;
-        totalPlayerCount = game.team1.players.length;
-    } else { //implicit - game.teamInControl === 2
-        activePlayerIndex = game.team2.activePlayerIndex;
-        totalPlayerCount = game.team2.players.length;
-    }
-
-    if (totalPlayerCount < 1) {
-        activePlayerIndex = 0;
-    } else if(isNextPlayer) {
-        activePlayerIndex++;
-        if (activePlayerIndex >= totalPlayerCount) {
-            activePlayerIndex = 0;
-        }
-    } else {
-        activePlayerIndex--;
-        if(activePlayerIndex < 0) {
-            activePlayerIndex = totalPlayerCount - 1;
-        }
-    }
-
-    if (game.teamInControl === 1) {
-        game.team1.activePlayerIndex = activePlayerIndex;
-    } else { //implicit - gameData.teamInControl === 2
-        game.team2.activePlayerIndex = activePlayerIndex;
-    }
-}
-
-async function updateGameDataFile(publicCode, game) {
-    await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
-}
-
 export async function createGame(req, res, next) {
     if(!Object.hasOwn(req.body, 'name')){
         const error = new Error(`Game Name is Required`);
@@ -221,4 +155,70 @@ export async function revealOrHideAnswer (req, res, next) {
         error.status = 500;
         return next(error);
     }
+}
+
+function gameFilePath(publicCode) {
+    return path.join(__dirname, "../", "json", "games", `${publicCode}.json`);
+}
+
+async function getNextQuestionForGame(askedQuestions) {
+    const question = await getNextQuestion(askedQuestions);
+
+    question.answers.forEach(answer => {
+        answer.answered = false;
+    });
+
+    return question;
+}
+
+async function readGameFile(publicCode) {
+    try {
+        const gameRaw = await fs.readFile(gameFilePath(publicCode));
+        return JSON.parse(gameRaw);
+    } catch {
+        const error = new Error(`A game with the code of ${publicCode} was not found`);
+        error.status = 404;
+        return next(error);
+    }
+}
+
+function updateActivePlayer (game, isNextPlayer = true) {
+    if (typeof isNextPlayer !== "boolean") {
+        throw new Error("Improper value for isNextPlayer");
+    }
+
+    let activePlayerIndex;
+    let totalPlayerCount;
+
+    if (game.teamInControl === 1) {
+        activePlayerIndex = game.team1.activePlayerIndex;
+        totalPlayerCount = game.team1.players.length;
+    } else { //implicit - game.teamInControl === 2
+        activePlayerIndex = game.team2.activePlayerIndex;
+        totalPlayerCount = game.team2.players.length;
+    }
+
+    if (totalPlayerCount < 1) {
+        activePlayerIndex = 0;
+    } else if(isNextPlayer) {
+        activePlayerIndex++;
+        if (activePlayerIndex >= totalPlayerCount) {
+            activePlayerIndex = 0;
+        }
+    } else {
+        activePlayerIndex--;
+        if(activePlayerIndex < 0) {
+            activePlayerIndex = totalPlayerCount - 1;
+        }
+    }
+
+    if (game.teamInControl === 1) {
+        game.team1.activePlayerIndex = activePlayerIndex;
+    } else { //implicit - gameData.teamInControl === 2
+        game.team2.activePlayerIndex = activePlayerIndex;
+    }
+}
+
+async function updateGameDataFile(publicCode, game) {
+    await fs.writeFile(gameFilePath(publicCode), JSON.stringify(game, null, 2));
 }
