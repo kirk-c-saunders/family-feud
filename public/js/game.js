@@ -25,10 +25,12 @@ if (gameData.isAuthorizedHost) {
                 await revealOrHideAnswer (answerIndex, true);
                 gameData.round.question.answers[answerIndex].answered = true;
                 clickedAnswer.classList.remove("hidden-answer");
+                updateActivePlayer(true);
             } else {
                 await revealOrHideAnswer (answerIndex, false);
                 gameData.round.question.answers[answerIndex].answered = false;
                 clickedAnswer.classList.add("hidden-answer");
+                updateActivePlayer(false);
             }
 
             setInnerTextByElementId("round-score", calculateRoundScore());
@@ -131,6 +133,42 @@ function calculateRoundScore () {
     }
 
     return roundScore;
+}
+
+async function updateActivePlayer(isNextPlayer = true) {
+    if(gameData.teamInControl === 1) {
+        if(isNextPlayer) {
+            gameData.team1.activePlayerIndex++;
+            
+            if(gameData.team1.activePlayerIndex >= gameData.team1.players.length) {
+                gameData.team1.activePlayerIndex = 0;
+            }
+        } else {
+            gameData.team1.activePlayerIndex--;
+
+            if(gameData.team1.activePlayerIndex < 0) {
+                gameData.team1.activePlayerIndex = gameData.team1.players.length - 1;
+            }
+        }
+
+        addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
+    } else { //implicit gameData.teamInControl === 2
+        if(isNextPlayer) {
+            gameData.team2.activePlayerIndex++;
+            
+            if(gameData.team2.activePlayerIndex >= gameData.team2.players.length) {
+                gameData.team2.activePlayerIndex = 0;
+            }
+        } else {
+            gameData.team2.activePlayerIndex--;
+
+            if(gameData.team2.activePlayerIndex < 0) {
+                gameData.team2.activePlayerIndex = gameData.team2.players.length - 1;
+            }
+        }
+
+        addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
+    }
 }
 
 async function initialPageLoad() {
