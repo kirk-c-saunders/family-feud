@@ -57,13 +57,44 @@ export async function createGame(req, res, next) {
         game.round.question = await getNextQuestionForGame(game.askedQuestions);
         game.round.incorrectResponseCount = 0;
 
-        updateGameDataFile(publicCode, game);
+        await updateGameDataFile(publicCode, game);
         
         res.status(200).json({publicCode: publicCode, hostCode: hostCode});
     } catch (e) {
         const error = new Error(`Error creating game: ${e}`);
         error.status = 500;
         return next(error);
+    }
+}
+
+export async function incorrectResponse (req, res, next) {
+    const publicCode = req.params.publicCode;
+    let hostCode = "";
+
+    if(Object.hasOwn(req.body, 'hostCode')){
+        hostCode = req.body.hostCode;
+    }
+
+    const game = await readGameFile(publicCode);
+
+    if(hostCode !== game.hostCode) {
+        const error = new Error(`Incorrect Host Code`);
+        error.status = 400;
+        return next(error);
+    }
+
+    if(game.round.incorrectResponseCount >= 3) {
+        const error = new Error(`Round already has 3+ incorrect responses`);
+        error.status = 400;
+        return next(error);
+    } else {
+        game.round.incorrectResponseCount++;
+
+        updateActivePlayer (game, true);
+
+        await updateGameDataFile(publicCode, game);
+        
+        res.status(200).json({"incorrectResponseCount":`${game.round.incorrectResponseCount}`});
     }
 }
 
@@ -147,7 +178,7 @@ export async function revealOrHideAnswer (req, res, next) {
 
         updateActivePlayer (game, isReveal)
 
-        updateGameDataFile(publicCode, game);
+        await updateGameDataFile(publicCode, game);
         
         res.status(200).json({answerIndex: answerIndex, isReveal: isReveal});
     } catch (e) {

@@ -36,6 +36,16 @@ if (gameData.isAuthorizedHost) {
             setInnerTextByElementId("round-score", calculateRoundScore());
         }
     })
+
+    document.getElementById("incorrect-anwer").addEventListener("click", async () => {
+        console.log("clicked incorrect answer");
+        
+        const incorrectResponseCountRaw = await incorrectResponse();
+        gameData.round.incorrectResponseCount = parseInt(incorrectResponseCountRaw.incorrectResponseCount);
+
+        updateActivePlayer(true);
+        setIncorrectResponseXs();
+    })
 } 
 else {
     await refreshPageLoop();
@@ -135,39 +145,17 @@ function calculateRoundScore () {
     return roundScore;
 }
 
-async function updateActivePlayer(isNextPlayer = true) {
-    if(gameData.teamInControl === 1) {
-        if(isNextPlayer) {
-            gameData.team1.activePlayerIndex++;
-            
-            if(gameData.team1.activePlayerIndex >= gameData.team1.players.length) {
-                gameData.team1.activePlayerIndex = 0;
-            }
-        } else {
-            gameData.team1.activePlayerIndex--;
+async function incorrectResponse() {
+    const response = await fetch(`./api/game/incorrectResponse/${publicCode}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({hostCode})
+    });
 
-            if(gameData.team1.activePlayerIndex < 0) {
-                gameData.team1.activePlayerIndex = gameData.team1.players.length - 1;
-            }
-        }
-
-        addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
-    } else { //implicit gameData.teamInControl === 2
-        if(isNextPlayer) {
-            gameData.team2.activePlayerIndex++;
-            
-            if(gameData.team2.activePlayerIndex >= gameData.team2.players.length) {
-                gameData.team2.activePlayerIndex = 0;
-            }
-        } else {
-            gameData.team2.activePlayerIndex--;
-
-            if(gameData.team2.activePlayerIndex < 0) {
-                gameData.team2.activePlayerIndex = gameData.team2.players.length - 1;
-            }
-        }
-
-        addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
+    if(!response.ok) {
+        alert("Failed to update answer.");
+    } else {
+        return await response.json();
     }
 }
 
@@ -237,7 +225,7 @@ async function pageRefresh(refreshGameData = true) {
     setInnerTextByElementId("timer", "3:00");
     
     setInnerTextByElementId("round-score", calculateRoundScore());
-    setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X"));
+    setIncorrectResponseXs();
 
     setAnswersGrid(false);
 }
@@ -284,6 +272,10 @@ async function revealOrHideAnswer (answerIndex, isReveal) {
     }
 }
 
+function setIncorrectResponseXs () {
+    setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X").substring(0,3));
+}
+
 function setInnerTextByElementId (elementId, innerTextValue) {
     document.getElementById(elementId).innerText = innerTextValue;
 }
@@ -293,5 +285,41 @@ function setAnswersGrid () {
     
     for (let i = 0; i < gameData.round.question.answers.length; i++) {
         addAnswer (gameData.round.question.answers[i], i);
+    }
+}
+
+async function updateActivePlayer(isNextPlayer = true) {
+    if(gameData.teamInControl === 1) {
+        if(isNextPlayer) {
+            gameData.team1.activePlayerIndex++;
+            
+            if(gameData.team1.activePlayerIndex >= gameData.team1.players.length) {
+                gameData.team1.activePlayerIndex = 0;
+            }
+        } else {
+            gameData.team1.activePlayerIndex--;
+
+            if(gameData.team1.activePlayerIndex < 0) {
+                gameData.team1.activePlayerIndex = gameData.team1.players.length - 1;
+            }
+        }
+
+        addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
+    } else { //implicit gameData.teamInControl === 2
+        if(isNextPlayer) {
+            gameData.team2.activePlayerIndex++;
+            
+            if(gameData.team2.activePlayerIndex >= gameData.team2.players.length) {
+                gameData.team2.activePlayerIndex = 0;
+            }
+        } else {
+            gameData.team2.activePlayerIndex--;
+
+            if(gameData.team2.activePlayerIndex < 0) {
+                gameData.team2.activePlayerIndex = gameData.team2.players.length - 1;
+            }
+        }
+
+        addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
     }
 }
