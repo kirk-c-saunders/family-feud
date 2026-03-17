@@ -1,11 +1,12 @@
 import express from 'express';
-import {createGame, incorrectResponse, loadGame, revealOrHideAnswer, updateTeamInControl} from '../controllers/gameController.js';
+import {completeRound, createGame, incorrectResponse, loadGame, revealOrHideAnswer, updateTeamInControl} from '../controllers/gameController.js';
 
 const router = express.Router();
 
 router.get('/', loadGame);
 
 router.post('/', createGame);
+router.post('/completeRound/:publicCode', completeRound)
 router.post('/incorrectResponse/:publicCode', incorrectResponse);
 router.post('/revealOrHideAnswer/:publicCode', revealOrHideAnswer);
 router.post('/updateTeamInControl/:publicCode', updateTeamInControl);

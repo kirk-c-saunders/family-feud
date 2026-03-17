@@ -38,11 +38,22 @@ if (gameData.isAuthorizedHost) {
     })
 
     document.getElementById("incorrect-anwer").addEventListener("click", async () => {
-        const incorrectResponseCountRaw = await incorrectResponse();
-        gameData.round.incorrectResponseCount = parseInt(incorrectResponseCountRaw.incorrectResponseCount);
+        if(gameData.round.incorrectResponseCount <= 2) {
+            const incorrectResponseCountRaw = await incorrectResponse();
+            gameData.round.incorrectResponseCount = parseInt(incorrectResponseCountRaw.incorrectResponseCount);
 
-        updateActivePlayer(true);
-        setIncorrectResponseXs();
+            updateActivePlayer(true);
+            setIncorrectResponseXs();
+            if(gameData.round.incorrectResponseCount === 3) {
+                if(gameData.teamInControl === 1) {
+                    await updateTeamInControl(2);
+                } else {
+                    await updateTeamInControl(1);
+                }
+            }
+        } else {
+            alert("Already have 3 incorrect responses.")
+        }
     });
 
     document.getElementById("team-1-desktop").addEventListener("click", async() =>{
@@ -67,6 +78,14 @@ if (gameData.isAuthorizedHost) {
         if(gameData.teamInControl !== 2) {
             await updateTeamInControl(2);
         }
+    });
+
+    document.getElementById("team-1-wins-round").addEventListener("click", async() => {
+        await completeRound(1);
+    });
+
+    document.getElementById("team-2-wins-round").addEventListener("click", async() => {
+        await completeRound(2);
     });
 } 
 else {
@@ -147,11 +166,16 @@ function assignControlToTeam (teamNumber) {
         document.getElementById("team-1-desktop").classList.add("team-in-control");
         document.getElementById("team-2-mobile").classList.remove("team-in-control");
         document.getElementById("team-2-desktop").classList.remove("team-in-control");
-    } else {
+    } else if (teamNumber === 2) {
         document.getElementById("team-1-mobile").classList.remove("team-in-control");
         document.getElementById("team-1-desktop").classList.remove("team-in-control");
         document.getElementById("team-2-mobile").classList.add("team-in-control");
         document.getElementById("team-2-desktop").classList.add("team-in-control");
+    } else {
+        document.getElementById("team-1-mobile").classList.remove("team-in-control");
+        document.getElementById("team-1-desktop").classList.remove("team-in-control");
+        document.getElementById("team-2-mobile").classList.remove("team-in-control");
+        document.getElementById("team-2-desktop").classList.remove("team-in-control");
     }
 }
 
@@ -165,6 +189,21 @@ function calculateRoundScore () {
     }
 
     return roundScore;
+}
+
+async function completeRound(winningTeam) {
+    const response = await fetch(`./api/game/completeRound/${publicCode}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({hostCode, winningTeam})
+    });
+
+    if(!response.ok) {
+        alert("Failed to complete round.");
+    } else {
+        await pageRefresh();
+        return await response.json();
+    }
 }
 
 async function incorrectResponse() {
@@ -200,6 +239,10 @@ async function initialPageLoad() {
     if(gameData.isAuthorizedHost) {
         setInnerTextByElementId("team-1-wins-round", `${gameData.team1.name} - Wins Round`);
         setInnerTextByElementId("team-2-wins-round", `${gameData.team2.name} - Wins Round`);
+        document.getElementById("team-1-mobile").classList.add("hover");
+        document.getElementById("team-1-desktop").classList.add("hover");
+        document.getElementById("team-2-mobile").classList.add("hover");
+        document.getElementById("team-2-desktop").classList.add("hover");
     } else {
         document.getElementById("team-1-wins-round").remove();
         document.getElementById("incorrect-anwer").remove();

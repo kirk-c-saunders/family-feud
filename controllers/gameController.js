@@ -8,6 +8,68 @@ import fs from "fs/promises";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export async function completeRound(req, res, next) {
+    try {
+        const publicCode = req.params.publicCode;
+        let hostCode = "";
+        let roundScore = 0;
+
+        if(!Object.hasOwn(req.body, 'winningTeam')){
+            const error = new Error(`winningTeam is Required`);
+            error.status = 400;
+            return next(error);
+        }
+        const winningTeam = parseInt(req.body.winningTeam);
+
+        if(winningTeam !== 1 && winningTeam!==2) {
+            const error = new Error(`winningTeam must be either 1 or 2`);
+            error.status = 400;
+            return next(error);
+        }
+
+        if(Object.hasOwn(req.body, 'hostCode')){
+            hostCode = req.body.hostCode;
+        }
+
+        const game = await readGameFile(publicCode);
+
+        if(hostCode !== game.hostCode) {
+            const error = new Error(`Incorrect Host Code`);
+            error.status = 400;
+            return next(error);
+        }
+
+        for (let i = 0; i < game.round.question.answers.length; i++) {
+            if (game.round.question.answers[i].answered) {
+                roundScore += game.round.question.answers[i].points;
+            }
+        }
+
+        if(winningTeam === 1) {
+            game.team1.score += roundScore;
+        } else {
+            game.team2.score += roundScore;
+        }
+
+        game.askedQuestions.push(game.round.question.id);
+
+        console.log(`updated asked questions - ${game.askedQuestions}`);
+
+        game.round.question = await getNextQuestionForGame(game.askedQuestions);
+        game.round.incorrectResponseCount = 0;
+
+        game.teamInControl = null;
+
+        await updateGameDataFile(publicCode, game);
+
+        res.status(200).json({winningTeam: winningTeam});
+    } catch (e) {
+        const error = new Error(`Error completing round: ${e}`);
+        error.status = 500;
+        return next(error);
+    }
+}
+
 export async function createGame(req, res, next) {
     if(!Object.hasOwn(req.body, 'name')){
         const error = new Error(`Game Name is Required`);
@@ -52,7 +114,7 @@ export async function createGame(req, res, next) {
         game.round = {};
         game.team1 = team1;
         game.team2 = team2;
-        game.teamInControl = 1;
+        game.teamInControl = null;
 
         game.round.question = await getNextQuestionForGame(game.askedQuestions);
         game.round.incorrectResponseCount = 0;
