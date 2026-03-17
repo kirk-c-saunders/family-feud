@@ -326,6 +326,9 @@ async function updateActivePlayer(isNextPlayer = true) {
             }
         }
 
+        if (gameData.team1.players.length >= 1) {
+            setInnerTextByElementId("team-1-current-player-mobile", gameData.team1.players[gameData.team1.activePlayerIndex]);
+        }
         addPlayersToDesktopPlayerList (1, gameData.team1.players, gameData.team1.activePlayerIndex);
     } else { //implicit gameData.teamInControl === 2
         if(isNextPlayer) {
@@ -342,6 +345,9 @@ async function updateActivePlayer(isNextPlayer = true) {
             }
         }
 
+        if (gameData.team2.players.length >= 1) {
+            setInnerTextByElementId("team-2-current-player-mobile", gameData.team2.players[gameData.team2.activePlayerIndex]);
+        }
         addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
     }
 }
