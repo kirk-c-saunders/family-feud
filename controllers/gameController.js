@@ -188,6 +188,48 @@ export async function revealOrHideAnswer (req, res, next) {
     }
 }
 
+export async function updateTeamInControl(req, res, next) {
+    try {
+        const publicCode = req.params.publicCode;
+        let hostCode = "";
+
+        if(!Object.hasOwn(req.body, 'teamInControl')){
+            const error = new Error(`teamInControl is Required`);
+            error.status = 400;
+            return next(error);
+        }
+        const teamInControl = parseInt(req.body.teamInControl);
+
+        if(teamInControl !== 1 && teamInControl!==2) {
+            const error = new Error(`teamInControl must be either 1 or 2`);
+            error.status = 400;
+            return next(error);
+        }
+        
+        if(Object.hasOwn(req.body, 'hostCode')){
+            hostCode = req.body.hostCode;
+        }
+
+        const game = await readGameFile(publicCode);
+
+        if(hostCode !== game.hostCode) {
+            const error = new Error(`Incorrect Host Code`);
+            error.status = 400;
+            return next(error);
+        }
+
+        game.teamInControl = teamInControl;
+
+        await updateGameDataFile(publicCode, game);
+
+        res.status(200).json({teamInControl: teamInControl});
+    } catch (e) {
+        const error = new Error(`Error updating team in control: ${e}`);
+        error.status = 500;
+        return next(error);
+    }
+}
+
 function gameFilePath(publicCode) {
     return path.join(__dirname, "../", "json", "games", `${publicCode}.json`);
 }

@@ -38,14 +38,36 @@ if (gameData.isAuthorizedHost) {
     })
 
     document.getElementById("incorrect-anwer").addEventListener("click", async () => {
-        console.log("clicked incorrect answer");
-        
         const incorrectResponseCountRaw = await incorrectResponse();
         gameData.round.incorrectResponseCount = parseInt(incorrectResponseCountRaw.incorrectResponseCount);
 
         updateActivePlayer(true);
         setIncorrectResponseXs();
-    })
+    });
+
+    document.getElementById("team-1-desktop").addEventListener("click", async() =>{
+        if(gameData.teamInControl !== 1) {
+            await updateTeamInControl(1);
+        }
+    });
+
+    document.getElementById("team-1-mobile").addEventListener("click", async() =>{
+        if(gameData.teamInControl !== 1) {
+            await updateTeamInControl(1);
+        }
+    });
+
+    document.getElementById("team-2-mobile").addEventListener("click", async() =>{
+        if(gameData.teamInControl !== 2) {
+            await updateTeamInControl(2);
+        }
+    });
+
+    document.getElementById("team-2-desktop").addEventListener("click", async() =>{
+        if(gameData.teamInControl !== 2) {
+            await updateTeamInControl(2);
+        }
+    });
 } 
 else {
     await refreshPageLoop();
@@ -321,5 +343,21 @@ async function updateActivePlayer(isNextPlayer = true) {
         }
 
         addPlayersToDesktopPlayerList (2, gameData.team2.players, gameData.team2.activePlayerIndex);
+    }
+}
+
+async function updateTeamInControl(teamInControl) {
+    const response = await fetch(`./api/game/updateTeamInControl/${publicCode}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({hostCode, teamInControl})
+    });
+
+    if(!response.ok) {
+        alert("Failed to update team in control.");
+    } else {
+        gameData.teamInControl = teamInControl;
+        assignControlToTeam(teamInControl)
+        return await response.json();
     }
 }
