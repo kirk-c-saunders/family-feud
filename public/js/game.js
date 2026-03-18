@@ -1,6 +1,7 @@
 import { hostCodeLocalStorageKey } from "./globalVariables.js";
 const publicCode = new URLSearchParams(window.location.search).get("publicCode");
 const answerGrid = document.getElementById("answer-grid");
+const timer = document.getElementById("timer");
 
 if(!publicCode) {
     console.error("Game's public code is needed in the URL in order to play");
@@ -203,6 +204,20 @@ async function completeRound(winningTeam) {
     } else {
         await pageRefresh();
         return await response.json();
+    }
+}
+
+async function displayTimer() {
+    if(Object.hasOwn(gameData, 'timerEndDateTime')){
+        if(gameData.timerEndDateTime) {
+            const timerEndDateTime = new Date(gameData.timerEndDateTime);
+
+            if(timerEndDateTime > Date.now()) {
+                timer.innerText = `${Math.floor((timerEndDateTime - Date.now()) / 1000)}`;
+            } else {
+                timer.innerText = "0";
+            }
+        }
     }
 }
 

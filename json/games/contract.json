@@ -37,5 +37,6 @@
         "players": ["Name of Player 1 on Team 2", "Name of Player 2 on Team 2", "... and so on"],
         "score": 0
     },
-    "teamInControl": 1
+    "teamInControl": 1,
+	"timerEndDateTime":"2026-03-17T23:22:11.860Z"
 }

@@ -250,6 +250,44 @@ export async function revealOrHideAnswer (req, res, next) {
     }
 }
 
+export async function setTimer(req, res, next) {
+    try {
+        const publicCode = req.params.publicCode;
+        let hostCode = "";
+        
+        if(!Object.hasOwn(req.body, 'timerLengthInSeconds')){
+            const error = new Error(`timerLengthInSeconds is Required`);
+            error.status = 400;
+            return next(error);
+        }
+        const timerLengthInSeconds = parseInt(req.body.timerLengthInSeconds);
+
+        if(Object.hasOwn(req.body, 'hostCode')){
+            hostCode = req.body.hostCode;
+        }
+
+        const game = await readGameFile(publicCode);
+
+        if(hostCode !== game.hostCode) {
+            const error = new Error(`Incorrect Host Code`);
+            error.status = 400;
+            return next(error);
+        }
+
+        const timerEndDateTime = new Date(Date.now() + (timerLengthInSeconds * 1000));
+
+        game.timerEndDateTime = timerEndDateTime.toISOString();
+
+        await updateGameDataFile(publicCode, game);
+
+        res.status(200).json({timerEndDateTime: timerEndDateTime});
+    }  catch (e) {
+        const error = new Error(`Error updating timer end date time: ${e}`);
+        error.status = 500;
+        return next(error);
+    }
+}
+
 export async function updateTeamInControl(req, res, next) {
     try {
         const publicCode = req.params.publicCode;
