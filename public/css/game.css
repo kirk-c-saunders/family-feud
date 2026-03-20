@@ -98,8 +98,10 @@ hr {
 }
 
 #round-stats {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    align-items: center;
 }
 
 #answer-grid {

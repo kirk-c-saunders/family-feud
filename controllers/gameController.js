@@ -119,6 +119,8 @@ export async function createGame(req, res, next) {
         game.round.question = await getNextQuestionForGame(game.askedQuestions);
         game.round.incorrectResponseCount = 0;
 
+        game.timerEndDateTime = null;
+
         await updateGameDataFile(publicCode, game);
         
         res.status(200).json({publicCode: publicCode, hostCode: hostCode});
@@ -274,13 +276,17 @@ export async function setTimer(req, res, next) {
             return next(error);
         }
 
-        const timerEndDateTime = new Date(Date.now() + (timerLengthInSeconds * 1000));
+        if(timerLengthInSeconds) {
+            const timerEndDateTime = new Date(Date.now() + (timerLengthInSeconds * 1000));
 
-        game.timerEndDateTime = timerEndDateTime.toISOString();
+            game.timerEndDateTime = timerEndDateTime.toISOString();
+        } else {
+            game.timerEndDateTime = null;
+        }
 
         await updateGameDataFile(publicCode, game);
 
-        res.status(200).json({timerEndDateTime: timerEndDateTime});
+        res.status(200).json({timerEndDateTime: game.timerEndDateTime});
     }  catch (e) {
         const error = new Error(`Error updating timer end date time: ${e}`);
         error.status = 500;

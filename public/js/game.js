@@ -2,6 +2,7 @@ import { hostCodeLocalStorageKey } from "./globalVariables.js";
 const publicCode = new URLSearchParams(window.location.search).get("publicCode");
 const answerGrid = document.getElementById("answer-grid");
 const timer = document.getElementById("timer");
+const timerLengthInSeconds = 45;
 
 if(!publicCode) {
     console.error("Game's public code is needed in the URL in order to play");
@@ -13,47 +14,65 @@ const gameData = await populateGameData();
 await initialPageLoad();
 
 if (gameData.isAuthorizedHost) {
+    timer.addEventListener("click", async () => {
+        if (gameData.teamInControl) {
+            await setTimer(timerLengthInSeconds)
+        } else {
+            alertToPickTeamInControl();
+        }
+    });
+    
     answerGrid.addEventListener("click", async (e) => {
-        const regex = new RegExp("answer-.*");
+        if(gameData.teamInControl) {
+            const regex = new RegExp("answer-.*");
 
-        if(regex.test(e.target.id))
-        {
-            const targetIdSplit = e.target.id.split('-');
-            const clickedAnswer = document.getElementById(`${targetIdSplit[0]}-${targetIdSplit[1]}`);
-            const answerIndex = parseInt(targetIdSplit[1], 10);
+            if(regex.test(e.target.id))
+            {
+                const targetIdSplit = e.target.id.split('-');
+                const clickedAnswer = document.getElementById(`${targetIdSplit[0]}-${targetIdSplit[1]}`);
+                const answerIndex = parseInt(targetIdSplit[1], 10);
 
-            if(!gameData.round.question.answers[answerIndex].answered) {
-                await revealOrHideAnswer (answerIndex, true);
-                gameData.round.question.answers[answerIndex].answered = true;
-                clickedAnswer.classList.remove("hidden-answer");
-                updateActivePlayer(true);
-            } else {
-                await revealOrHideAnswer (answerIndex, false);
-                gameData.round.question.answers[answerIndex].answered = false;
-                clickedAnswer.classList.add("hidden-answer");
-                updateActivePlayer(false);
+                if(!gameData.round.question.answers[answerIndex].answered) {
+                    await revealOrHideAnswer (answerIndex, true);
+                    gameData.round.question.answers[answerIndex].answered = true;
+                    clickedAnswer.classList.remove("hidden-answer");
+                    updateActivePlayer(true);
+                    await setTimer(timerLengthInSeconds)
+                } else {
+                    await revealOrHideAnswer (answerIndex, false);
+                    gameData.round.question.answers[answerIndex].answered = false;
+                    clickedAnswer.classList.add("hidden-answer");
+                    updateActivePlayer(false);
+                }
+
+                setInnerTextByElementId("round-score", calculateRoundScore());
             }
-
-            setInnerTextByElementId("round-score", calculateRoundScore());
+        } else {
+            alertToPickTeamInControl();
         }
     })
 
     document.getElementById("incorrect-anwer").addEventListener("click", async () => {
-        if(gameData.round.incorrectResponseCount <= 2) {
-            const incorrectResponseCountRaw = await incorrectResponse();
-            gameData.round.incorrectResponseCount = parseInt(incorrectResponseCountRaw.incorrectResponseCount);
+        if(gameData.teamInControl){
+            if(gameData.round.incorrectResponseCount <= 2) {
+                const incorrectResponseCountRaw = await incorrectResponse();
+                gameData.round.incorrectResponseCount = parseInt(incorrectResponseCountRaw.incorrectResponseCount);
 
-            updateActivePlayer(true);
-            setIncorrectResponseXs();
-            if(gameData.round.incorrectResponseCount === 3) {
-                if(gameData.teamInControl === 1) {
-                    await updateTeamInControl(2);
-                } else {
-                    await updateTeamInControl(1);
+                updateActivePlayer(true);
+                setIncorrectResponseXs();
+                if(gameData.round.incorrectResponseCount === 3) {
+                    if(gameData.teamInControl === 1) {
+                        await updateTeamInControl(2);
+                    } else {
+                        await updateTeamInControl(1);
+                    }
                 }
+                await setTimer(timerLengthInSeconds)
+            } else {
+                alert("Already have 3 incorrect responses.")
             }
         } else {
-            alert("Already have 3 incorrect responses.")
+            alertToPickTeamInControl();
         }
     });
 
@@ -161,6 +180,10 @@ function addPlayersToDesktopPlayerList (teamNumber, playerList, activePlayerInde
     }
 }
 
+function alertToPickTeamInControl() {
+    alert("Please select a team to be in control of the round before proceeding.");
+}
+
 function assignControlToTeam (teamNumber) {
     if (teamNumber === 1) {
         document.getElementById("team-1-mobile").classList.add("team-in-control");
@@ -193,6 +216,9 @@ function calculateRoundScore () {
 }
 
 async function completeRound(winningTeam) {
+    await setTimer(null);
+    timer.innerText = "Click to Start Timer";
+    
     const response = await fetch(`./api/game/completeRound/${publicCode}`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -207,7 +233,7 @@ async function completeRound(winningTeam) {
     }
 }
 
-async function displayTimer() {
+function displayTimer() {
     if(Object.hasOwn(gameData, 'timerEndDateTime')){
         if(gameData.timerEndDateTime) {
             const timerEndDateTime = new Date(gameData.timerEndDateTime);
@@ -216,9 +242,12 @@ async function displayTimer() {
                 timer.innerText = `${Math.floor((timerEndDateTime - Date.now()) / 1000)}`;
             } else {
                 timer.innerText = "0";
+                gameData.timerEndDateTime = null; //This should make this function faster by doing 2 if checks and nothing else.
             }
         }
     }
+
+    setTimeout(displayTimer, 1000);
 }
 
 async function incorrectResponse() {
@@ -258,18 +287,20 @@ async function initialPageLoad() {
         document.getElementById("team-1-desktop").classList.add("hover");
         document.getElementById("team-2-mobile").classList.add("hover");
         document.getElementById("team-2-desktop").classList.add("hover");
+        timer.classList.add("hover");
+        timer.innerText = "Click to Start Timer";
     } else {
         document.getElementById("team-1-wins-round").remove();
         document.getElementById("incorrect-anwer").remove();
         document.getElementById("team-2-wins-round").remove();
     }
 
+    displayTimer();
+
     await pageRefresh();
 }
 
 async function pageRefresh(refreshGameData = true) {
-    console.log("triggered page refresh function");
-    
     if (refreshGameData) {
         Object.assign(gameData, await populateGameData());
     }
@@ -301,8 +332,6 @@ async function pageRefresh(refreshGameData = true) {
     assignControlToTeam(gameData.teamInControl);
 
     setInnerTextByElementId("question", gameData.round.question.question);
-
-    setInnerTextByElementId("timer", "3:00");
     
     setInnerTextByElementId("round-score", calculateRoundScore());
     setIncorrectResponseXs();
@@ -352,6 +381,14 @@ async function revealOrHideAnswer (answerIndex, isReveal) {
     }
 }
 
+function setAnswersGrid () {
+    answerGrid.replaceChildren();
+    
+    for (let i = 0; i < gameData.round.question.answers.length; i++) {
+        addAnswer (gameData.round.question.answers[i], i);
+    }
+}
+
 function setIncorrectResponseXs () {
     setInnerTextByElementId("incorrect-response-count", "".padStart(gameData.round.incorrectResponseCount, "X").substring(0,3));
 }
@@ -360,11 +397,19 @@ function setInnerTextByElementId (elementId, innerTextValue) {
     document.getElementById(elementId).innerText = innerTextValue;
 }
 
-function setAnswersGrid () {
-    answerGrid.replaceChildren();
-    
-    for (let i = 0; i < gameData.round.question.answers.length; i++) {
-        addAnswer (gameData.round.question.answers[i], i);
+async function setTimer (timerLengthInSeconds) {
+    const response = await fetch(`./api/game/setTimer/${publicCode}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({hostCode, timerLengthInSeconds})
+    });
+
+    if(!response.ok) {
+        alert("Failed to set timer.");
+    } else {
+        const responseOutput = await response.json();
+        gameData.timerEndDateTime = responseOutput.timerEndDateTime;
+        return responseOutput;
     }
 }
 
