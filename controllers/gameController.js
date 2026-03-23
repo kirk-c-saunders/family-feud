@@ -35,7 +35,7 @@ export async function completeRound(req, res, next) {
 
         if(hostCode !== game.hostCode) {
             const error = new Error(`Incorrect Host Code`);
-            error.status = 400;
+            error.status = 401;
             return next(error);
         }
 
@@ -62,7 +62,7 @@ export async function completeRound(req, res, next) {
 
         await updateGameDataFile(publicCode, game);
 
-        res.status(200).json({winningTeam: winningTeam});
+        res.status(201).json({winningTeam: winningTeam});
     } catch (e) {
         const error = new Error(`Error completing round: ${e}`);
         error.status = 500;
@@ -123,7 +123,7 @@ export async function createGame(req, res, next) {
 
         await updateGameDataFile(publicCode, game);
         
-        res.status(200).json({publicCode: publicCode, hostCode: hostCode});
+        res.status(201).json({publicCode: publicCode, hostCode: hostCode});
     } catch (e) {
         const error = new Error(`Error creating game: ${e}`);
         error.status = 500;
@@ -143,7 +143,7 @@ export async function incorrectResponse (req, res, next) {
 
     if(hostCode !== game.hostCode) {
         const error = new Error(`Incorrect Host Code`);
-        error.status = 400;
+        error.status = 401;
         return next(error);
     }
 
@@ -158,7 +158,7 @@ export async function incorrectResponse (req, res, next) {
 
         await updateGameDataFile(publicCode, game);
         
-        res.status(200).json({"incorrectResponseCount":`${game.round.incorrectResponseCount}`});
+        res.status(201).json({"incorrectResponseCount":`${game.round.incorrectResponseCount}`});
     }
 }
 
@@ -228,7 +228,7 @@ export async function revealOrHideAnswer (req, res, next) {
 
         if(hostCode !== game.hostCode) {
             const error = new Error(`Incorrect Host Code`);
-            error.status = 400;
+            error.status = 401;
             return next(error);
         }
 
@@ -244,7 +244,7 @@ export async function revealOrHideAnswer (req, res, next) {
 
         await updateGameDataFile(publicCode, game);
         
-        res.status(200).json({answerIndex: answerIndex, isReveal: isReveal});
+        res.status(201).json({answerIndex: answerIndex, isReveal: isReveal});
     } catch (e) {
         const error = new Error(`Error revealing or hiding answer: ${e}`);
         error.status = 500;
@@ -272,7 +272,7 @@ export async function setTimer(req, res, next) {
 
         if(hostCode !== game.hostCode) {
             const error = new Error(`Incorrect Host Code`);
-            error.status = 400;
+            error.status = 401;
             return next(error);
         }
 
@@ -286,7 +286,7 @@ export async function setTimer(req, res, next) {
 
         await updateGameDataFile(publicCode, game);
 
-        res.status(200).json({timerEndDateTime: game.timerEndDateTime});
+        res.status(201).json({timerEndDateTime: game.timerEndDateTime});
     }  catch (e) {
         const error = new Error(`Error updating timer end date time: ${e}`);
         error.status = 500;
@@ -320,7 +320,7 @@ export async function updateTeamInControl(req, res, next) {
 
         if(hostCode !== game.hostCode) {
             const error = new Error(`Incorrect Host Code`);
-            error.status = 400;
+            error.status = 401;
             return next(error);
         }
 
@@ -328,7 +328,7 @@ export async function updateTeamInControl(req, res, next) {
 
         await updateGameDataFile(publicCode, game);
 
-        res.status(200).json({teamInControl: teamInControl});
+        res.status(201).json({teamInControl: teamInControl});
     } catch (e) {
         const error = new Error(`Error updating team in control: ${e}`);
         error.status = 500;
