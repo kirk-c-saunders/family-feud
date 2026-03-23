@@ -1,7 +1,7 @@
 :root{
-    --background-color: #132A13;
+    --background-color: rgb(7, 25, 187);
     --text-color: white;
-    --background-color-secondary: #4f772d; /* used for things like button colors */
+    --background-color-secondary: #0d59e6; /* used for things like button colors */
     --screen-size-breakpoint: 992px;
     --boarder-width: 2px;
     --boarder-style: solid;

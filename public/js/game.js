@@ -35,13 +35,13 @@ if (gameData.isAuthorizedHost) {
                 if(!gameData.round.question.answers[answerIndex].answered) {
                     await revealOrHideAnswer (answerIndex, true);
                     gameData.round.question.answers[answerIndex].answered = true;
-                    clickedAnswer.classList.remove("hidden-answer");
+                    clickedAnswer.classList.add("shown-answer");
                     updateActivePlayer(true);
                     await setTimer(timerLengthInSeconds)
                 } else {
                     await revealOrHideAnswer (answerIndex, false);
                     gameData.round.question.answers[answerIndex].answered = false;
-                    clickedAnswer.classList.add("hidden-answer");
+                    clickedAnswer.classList.remove("shown-answer");
                     updateActivePlayer(false);
                 }
 
@@ -116,7 +116,7 @@ function addAnswer (answer, answerNumber) {
     /*
         Each answer is structured like so:
 
-        <div id="answer-1" class="hover hidden-answer">
+        <div id="answer-1" class="hover shown-answer">
             <div id="answer-1-text">As much as they want</div>
             <div id="answer-1-points">50</div>
         </div>
@@ -143,9 +143,9 @@ function addAnswer (answer, answerNumber) {
         wrapper.id = wrapperId;
         if (gameData.isAuthorizedHost) {
             wrapper.classList.add("hover");
-        }
-        if(!answer.answered) {
-            wrapper.classList.add("hidden-answer");
+            if(answer.answered) {
+                wrapper.classList.add("shown-answer");
+            }
         }
         wrapper.appendChild(text);
         wrapper.appendChild(points);

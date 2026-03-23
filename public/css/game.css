@@ -31,11 +31,12 @@ hr {
 }
 
 .hover:hover {
-    background-color: var(--background-color-secondary);
+    background-image: linear-gradient(to bottom, var(--background-color), var(--background-color-secondary));
+    color: var(--text-color);
 }
 
-.hidden-answer {
-    background-color: black;
+.shown-answer {
+    background-color: var(--background-color-secondary);
 }
 
 #main-grid {
