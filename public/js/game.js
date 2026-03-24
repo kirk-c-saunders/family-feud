@@ -3,6 +3,7 @@ const publicCode = new URLSearchParams(window.location.search).get("publicCode")
 const answerGrid = document.getElementById("answer-grid");
 const timer = document.getElementById("timer");
 const timerLengthInSeconds = 45;
+const resetTimerString = "Click to Start Timer";
 
 if(!publicCode) {
     console.error("Game's public code is needed in the URL in order to play");
@@ -217,7 +218,7 @@ function calculateRoundScore () {
 
 async function completeRound(winningTeam) {
     await setTimer(null);
-    timer.innerText = "Click to Start Timer";
+    timer.innerText = resetTimerString;
     
     const response = await fetch(`./api/game/completeRound/${publicCode}`, {
         method: "POST",
@@ -244,6 +245,8 @@ function displayTimer() {
                 timer.innerText = "0";
                 gameData.timerEndDateTime = null; //This should make this function faster by doing 2 if checks and nothing else.
             }
+        } else if (timer.innerText !== "0" && timer.innerText !== resetTimerString) {
+            timer.innerText = "0";
         }
     }
 
@@ -288,7 +291,7 @@ async function initialPageLoad() {
         document.getElementById("team-2-mobile").classList.add("hover");
         document.getElementById("team-2-desktop").classList.add("hover");
         timer.classList.add("hover");
-        timer.innerText = "Click to Start Timer";
+        timer.innerText = resetTimerString;
     } else {
         document.getElementById("team-1-wins-round").remove();
         document.getElementById("incorrect-anwer").remove();
